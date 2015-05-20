@@ -1,4 +1,4 @@
-# jQuery Eye
+# jQuery DevGrid
 
 Version 1.0.0
 
