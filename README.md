@@ -101,7 +101,7 @@ $('body').devgrid({
 
 The result:
 
-![DevGrid Visualization Styles](https://raw.githubusercontent.com/Xaxis/jquery.devgrid/master/test/jquery_devgrid_style_demo.gif)
+![DevGrid Visualization Styles](https://raw.githubusercontent.com/Xaxis/jquery.devgrid/master/test/jquery_devgrid_style_demo.png)
 
 ### Using DevGrid Methods
 
