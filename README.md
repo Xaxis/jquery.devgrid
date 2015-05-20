@@ -7,6 +7,10 @@ Version 1.0.0
 jQuery.devgrid serves two purposes. It is useful for the visualization of responsive site grids while providing a method 
 for tracking which breakpoint is active in your frontend code.
 
+#### DevGrid Visualization
+
+![DevGrid Visualization](https://raw.githubusercontent.com/Xaxis/jquery.devgrid/master/test/jquery_devgrid_visualization_demo.gif)
+
 ## Author
 
 Wil Neeley ( [@wilneeley](http://twitter.com/wilneeley) / [puppetlabs.com](http://www.puppetlabs.com) / [github.com](https://github.com/Xaxis) )
