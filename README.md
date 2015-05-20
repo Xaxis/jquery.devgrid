@@ -13,7 +13,7 @@ means for tracking which breakpoint is active in your frontend code.
 
 #### DevGrid Breakpoint Tracking
 
-![DevGrid Visualization](https://raw.githubusercontent.com/Xaxis/jquery.devgrid/master/test/jquery_devgrid_tracking_demo.gif)
+![DevGrid Breakpoint Tracking](https://raw.githubusercontent.com/Xaxis/jquery.devgrid/master/test/jquery_devgrid_tracking_demo.gif)
 
 ## Author
 
@@ -69,6 +69,39 @@ $('body').devgrid({
     track: false
 });
 ```
+
+### Modify DevGrid Visualization Styles
+
+It's easy to alter any of the styles of the DevGrid Visualization you want.
+
+```javascript
+// jQuery.devgrid initialization w/ style alterations
+$('body').devgrid({
+    columns: 12,
+    columnWidth: '40px',
+    gutterWidth: '20px',
+    visible: true,
+    gridStyle: {
+        opacity: 0.4
+    },
+    columnStyle: {
+        background: 'green'
+    },
+    numBoxStyle: {
+        'font-size': '16px',
+        'line-height': '18px',
+        color: 'red'
+    },
+    infoBoxStyle: {
+        background: 'black',
+        color: 'white'
+    }
+});
+```
+
+The result:
+
+![DevGrid Visualization Styles](https://raw.githubusercontent.com/Xaxis/jquery.devgrid/master/test/jquery_devgrid_style_demo.gif)
 
 ### Using DevGrid Methods
 
