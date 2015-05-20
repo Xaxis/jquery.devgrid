@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>jQuery DevGrid Tests</title>
+</head>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script type="text/javascript" src="../dist/jquery.devgrid.min.js"></script>
+<body>
+
+<script>
+    // Basic devgrid initialization
+    $('body').devgrid({
+        columns: 12,
+        columnWidth: '40px',
+        gutterWidth: '20px',
+        visible: true,
+        track: true
+    });
+
+    // Hide the devgrid
+    $.fn.devgrid('hide');
+
+    // Show the devgrid
+    $.fn.devgrid('show');
+</script>
+
+</body>
+</html>
