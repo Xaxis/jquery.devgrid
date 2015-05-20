@@ -13,7 +13,7 @@ Wil Neeley ( [@wilneeley](http://twitter.com/wilneeley) / [puppetlabs.com](http:
 
 ## Usage
 
-Include `jquery.devgrid.min.js` after jQuery in your header or elsewhere in your page.
+Include `jquery.devgrid.min.js` after jQuery in your header or elsewhere on your page.
 
 ### Initialize DevGrid Visualization and Tracking
 
