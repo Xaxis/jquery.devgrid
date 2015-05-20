@@ -4,8 +4,8 @@ Version 1.0.0
 
 ## Summary
 
-jQuery.devgrid serves two purposes. It is useful for the visualization of responsive site grids/breakpoints while 
-providing a method for tracking which breakpoint is active in your frontend code.
+jQuery.devgrid serves two purposes. It is useful for the visualization of responsive site grids while providing a method 
+for tracking which breakpoint is active in your frontend code.
 
 ## Author
 
