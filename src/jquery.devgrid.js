@@ -271,12 +271,29 @@
   // Public methods
   var public_methods = {
 
+    /**
+     * Hide the devgrid
+     */
     hide: function() {
       $('.devgrid').hide();
     },
 
+    /**
+     * Show the devgrid
+     */
     show: function() {
       $('.devgrid').show();
+    },
+
+    /**
+     * Toggle devgrid visibility
+     */
+    toggle: function() {
+      if ($('.devgrid').css('display') == 'block') {
+        public_methods.hide();
+      } else {
+        public_methods.show();
+      }
     }
   };
 

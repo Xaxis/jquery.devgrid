@@ -114,6 +114,9 @@ $.fn.devgrid('hide');
 
 // Hide the DevGrid Visualization
 $.fn.devgrid('show');
+
+// Toggle the DevGrid's visibility
+$.fn.devgrid('toggle');
 ```
 
 ### Caveats
