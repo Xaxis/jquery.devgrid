@@ -203,44 +203,44 @@
       $(window).on('resize', this.trackBreakPoint);
     }
 
+    // Inclosure a window resize event to update info fields
+    var updateInfoFields = function() {
+
+      // Calculate info values
+      var
+        column_total_str        = plugin.options.columns,
+        window_width_str        = $(window).outerWidth() + 'px',
+        gutter_width            = parseFloat(plugin.options.gutterWidth.match(/\d+([\/.]\d+)?/g)[0]),
+        gutter_width_str        = plugin.options.gutterWidth,
+        column_width            = parseFloat(plugin.options.columnWidth.match(/\d+([\/.]\d+)?/g)[0]),
+        column_width_unit       = plugin.options.columnWidth.replace(/\d+([\/.]\d+)?/g, ''),
+        column_width_str        = plugin.options.columnWidth,
+        grid_column_width_str   = (gutter_width * 2) + column_width + column_width_unit,
+        active_breakpoint_str   = plugin.trackBreakPoint.call(plugin.trackBreakPoint);
+
+      // Reference info value elements
+      var
+        column_total_elm        = info_box.find('.devgrid-column-total span'),
+        window_width_elm        = info_box.find('.devgrid-window-width span'),
+        column_width_elm        = info_box.find('.devgrid-column-width span'),
+        gutter_width_elm        = info_box.find('.devgrid-gutter-width span'),
+        grid_column_width_elm   = info_box.find('.devgrid-grid-column-width span'),
+        active_breakpoint_elm   = info_box.find('.devgrid-active-breakpoint span');
+
+      // Populate elements with values
+      column_total_elm.html(column_total_str);
+      window_width_elm.html(window_width_str);
+      column_width_elm.html(column_width_str);
+      gutter_width_elm.html(gutter_width_str);
+      grid_column_width_elm.html(grid_column_width_str);
+      active_breakpoint_elm.html(active_breakpoint_str);
+    };
+    updateInfoFields();
+    $(window).on('resize', updateInfoFields);
+
     // Display visualization only when instructed
     if (this.options.visible) {
       devgrid.css('display', 'block');
-
-      // Inclosure a window resize event to update info fields
-      var updateInfoFields = function() {
-
-        // Calculate info values
-        var
-          column_total_str        = plugin.options.columns,
-          window_width_str        = $(window).outerWidth() + 'px',
-          gutter_width            = parseFloat(plugin.options.gutterWidth.match(/\d+([\/.]\d+)?/g)[0]),
-          gutter_width_str        = plugin.options.gutterWidth,
-          column_width            = parseFloat(plugin.options.columnWidth.match(/\d+([\/.]\d+)?/g)[0]),
-          column_width_unit       = plugin.options.columnWidth.replace(/\d+([\/.]\d+)?/g, ''),
-          column_width_str        = plugin.options.columnWidth,
-          grid_column_width_str   = (gutter_width * 2) + column_width + column_width_unit,
-          active_breakpoint_str   = plugin.trackBreakPoint.call(plugin.trackBreakPoint);
-
-        // Reference info value elements
-        var
-          column_total_elm        = info_box.find('.devgrid-column-total span'),
-          window_width_elm        = info_box.find('.devgrid-window-width span'),
-          column_width_elm        = info_box.find('.devgrid-column-width span'),
-          gutter_width_elm        = info_box.find('.devgrid-gutter-width span'),
-          grid_column_width_elm   = info_box.find('.devgrid-grid-column-width span'),
-          active_breakpoint_elm   = info_box.find('.devgrid-active-breakpoint span');
-
-        // Populate elements with values
-        column_total_elm.html(column_total_str);
-        window_width_elm.html(window_width_str);
-        column_width_elm.html(column_width_str);
-        gutter_width_elm.html(gutter_width_str);
-        grid_column_width_elm.html(grid_column_width_str);
-        active_breakpoint_elm.html(active_breakpoint_str);
-      };
-      updateInfoFields();
-      $(window).on('resize', updateInfoFields);
     }
   };
 

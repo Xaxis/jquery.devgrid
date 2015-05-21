@@ -18,15 +18,18 @@
         columns: 12,
         columnWidth: '40px',
         gutterWidth: '20px',
-        visible: true,
+        visible: false,
         track: true
     });
+
+    // Show the devgrid
+    $.fn.devgrid('show');
 
     // Hide the devgrid
     $.fn.devgrid('hide');
 
-    // Show the devgrid
-    $.fn.devgrid('show');
+    // Toggle devgrid visibility
+    $.fn.devgrid('toggle');
 </script>
 
 </body>
