@@ -9,8 +9,8 @@
     plugin_name   = 'devgrid',
     plugin_ref    = null,
     defaults      = {
-      columns: 16,
-      columnWidth: '40px',
+      columns: 18,
+      columnWidth: '60px',
       gutterWidth: '20px',
       visible: false,
       track: true,
@@ -28,7 +28,7 @@
         width: '20px',
         height: '100%',
         float: 'left',
-        margin: '0 20px',
+        'margin-left': '20px',
         background: 'rgba(0, 191, 255, 0.15)',
         position: 'relative',
         'box-sizing': 'border-box'
@@ -97,7 +97,7 @@
         gutter_width            = parseFloat(this.options.gutterWidth.match(/\d+([\/.]\d+)?/g)[0]),
         gutter_width_unit       = this.options.gutterWidth.replace(/\d+([\/.]\d+)?/g, ''),
         column_width            = parseFloat(this.options.columnWidth.match(/\d+([\/.]\d+)?/g)[0]),
-        column_width_total      = column_width + (gutter_width * 2),
+        column_width_total      = column_width + gutter_width,
         column_width_unit       = this.options.columnWidth.replace(/\d+([\/.]\d+)?/g, ''),
         column_break_point      = parseFloat(column_width_total * i),
         indicator_break_point   = column_break_point + column_width;
@@ -143,7 +143,7 @@
         .css($.extend(this._defaults.columnStyle, this.options.columnStyle))
         .css({
           width: this.options.columnWidth,
-          margin: '0 ' + this.options.gutterWidth
+          'margin-left': this.options.gutterWidth
         });
 
       // Create/append gutter "columns"
@@ -153,15 +153,9 @@
           width: gutter_width + gutter_width_unit,
           left: (-gutter_width) + gutter_width_unit
         });
-      var r_gutter = $('<div class="devgrid-gutter devgrid-r-gutter">')
-        .css($.extend(this._defaults.gutterStyle, this.options.gutterStyle))
-        .css({
-          width: gutter_width + gutter_width_unit,
-          right: (-gutter_width) + gutter_width_unit
-        });
 
       // Append gutters to columns
-      column.append(l_gutter).append(r_gutter);
+      column.append(l_gutter);
 
       // Add column to grid
       devgrid.append(column);
@@ -180,6 +174,7 @@
       '<div class="devgrid-info-row devgrid-window-width"><strong>Window Width:</strong> <span></span></div>' +
       '<div class="devgrid-info-row devgrid-column-width"><strong>Column Width:</strong> <span></span></div>' +
       '<div class="devgrid-info-row devgrid-gutter-width"><strong>Gutter Width:</strong> <span></span></div>' +
+      '<div class="devgrid-info-row devgrid-grid-width"><strong>Grid Width:</strong> <span></span></div>' +
       '<div class="devgrid-info-row devgrid-grid-column-width"><strong>Grid Column Width:</strong> <span></span></div>' +
       '<div class="devgrid-info-row devgrid-active-breakpoint"><strong>Active Breakpoint:</strong> <span></span></div>'
     );
@@ -215,7 +210,8 @@
         column_width            = parseFloat(plugin.options.columnWidth.match(/\d+([\/.]\d+)?/g)[0]),
         column_width_unit       = plugin.options.columnWidth.replace(/\d+([\/.]\d+)?/g, ''),
         column_width_str        = plugin.options.columnWidth,
-        grid_column_width_str   = (gutter_width * 2) + column_width + column_width_unit,
+        grid_width_str          = (gutter_width + column_width) * column_total_str + 'px',
+        grid_column_width_str   = gutter_width + column_width + column_width_unit,
         active_breakpoint_str   = plugin.trackBreakPoint.call(plugin.trackBreakPoint);
 
       // Reference info value elements
@@ -224,6 +220,7 @@
         window_width_elm        = info_box.find('.devgrid-window-width span'),
         column_width_elm        = info_box.find('.devgrid-column-width span'),
         gutter_width_elm        = info_box.find('.devgrid-gutter-width span'),
+        grid_width_elm        = info_box.find('.devgrid-grid-width span'),
         grid_column_width_elm   = info_box.find('.devgrid-grid-column-width span'),
         active_breakpoint_elm   = info_box.find('.devgrid-active-breakpoint span');
 
@@ -232,6 +229,7 @@
       window_width_elm.html(window_width_str);
       column_width_elm.html(column_width_str);
       gutter_width_elm.html(gutter_width_str);
+      grid_width_elm.html(grid_width_str);
       grid_column_width_elm.html(grid_column_width_str);
       active_breakpoint_elm.html(active_breakpoint_str);
     };
