@@ -220,7 +220,7 @@
         window_width_elm        = info_box.find('.devgrid-window-width span'),
         column_width_elm        = info_box.find('.devgrid-column-width span'),
         gutter_width_elm        = info_box.find('.devgrid-gutter-width span'),
-        grid_width_elm        = info_box.find('.devgrid-grid-width span'),
+        grid_width_elm          = info_box.find('.devgrid-grid-width span'),
         grid_column_width_elm   = info_box.find('.devgrid-grid-column-width span'),
         active_breakpoint_elm   = info_box.find('.devgrid-active-breakpoint span');
 
