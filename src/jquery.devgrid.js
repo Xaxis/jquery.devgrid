@@ -14,6 +14,7 @@
       gutterWidth: '20px',
       visible: false,
       track: true,
+      vertical: true,
       horizontal: false,
       gridStyle: {
         display: 'none',
@@ -267,7 +268,7 @@
       '<div class="devgrid-info-row devgrid-active-breakpoint"><strong>Active Breakpoint:</strong> <span></span></div>' +
       '<div class="devgrid-controls">' +
         '<div class="devgrid-control">' +
-          '<div><strong>X Grid: </strong> <input class="devgrid-control-x-grid" type="checkbox" checked></div>' +
+          '<div><strong>X Grid: </strong> <input class="devgrid-control-x-grid" type="checkbox" ' + (this.options.vertical ? 'checked' : '') + ' ></div>' +
           '<div><strong>Y Grid: </strong> <input class="devgrid-control-y-grid" type="checkbox" ' + (this.options.horizontal ? 'checked' : '') + ' ></div>' +
         '</div>' +
       '</div>'
@@ -345,7 +346,9 @@
 
     // Display visualization only when instructed
     if (this.options.visible) {
-      vert_devgrid.css('display', 'block');
+      if (this.options.vertical) {
+        vert_devgrid.css('display', 'block');
+      }
       if (this.options.horizontal) {
         horz_devgrid.css('display', 'block');
       }

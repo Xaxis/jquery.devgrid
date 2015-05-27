@@ -83,7 +83,22 @@ $('body').devgrid({
     columnWidth: '40px',
     gutterWidth: '20px',
     visible: true,
+    vertical: false,
     horizontal: true
+});
+```
+
+### Initialize DevGrid Visualization w/ Info Box Only
+
+```javascript
+// jQuery.devgrid initialization with only info box
+$('body').devgrid({
+    columns: 12,
+    columnWidth: '40px',
+    gutterWidth: '20px',
+    visible: true,
+    vertical: false,
+    horizontal: false
 });
 ```
 
