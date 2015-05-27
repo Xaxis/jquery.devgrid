@@ -39,7 +39,7 @@ $('body').devgrid({
 
 When you have no need to see your site's breakpoint visualizations but still would like to have the `<body>` element of 
 your site updated with the `data-devgrid-x-breakpoint` and `data-devgrid-y-breakpoint` attributes so you can track which 
-breakpoint are active programmatically, do the following:
+breakpoints are active programmatically, do the following:
 
 ```javascript
 // jQuery.devgrid initialization  w/o visualization 
@@ -52,8 +52,8 @@ $('body').devgrid({
 ```
 
 This can be useful in cases where you're using code which should respond at different breakpoints. Tracking the value of 
-the `data-devgrid-breakpoint` attribute with an observer or during a window resize event can provide just the feedback
-you need to fire your code when you need to.
+the `data-devgrid-x-breakpoint` and `data-devgrid-y-breakpoint` attributes with an observer or during a window resize 
+event can provide just the feedback you need to fire your code when you need to.
 
 ### DevGrid Visualization w/o Tracking
 
@@ -70,11 +70,11 @@ $('body').devgrid({
 });
 ```
 
-### Initialize DevGrid Visualization w/ Horizontal Grid
+### Initialize DevGrid Visualization w/ Horizontal (rows) Grid
 
 It is sometimes useful to track vertical changes in your responsive design as well. Enabling the horizontal grid gives
-you the ability to track and visualize horizontal screen space. Vertical tracking is accomplished by monitoring the 
-`data-devgrid-y-breakpoint` on the `<body>` element.
+you the ability to track and visualize vertical screen space. Vertical tracking is accomplished by monitoring the 
+`data-devgrid-y-breakpoint` attribute on the `<body>` element.
 
 ```javascript
 // jQuery.devgrid initialization w/ horizontal grid
