@@ -9,11 +9,11 @@ means for tracking which breakpoints are active in your frontend code.
 
 #### DevGrid Visualization
 
-![DevGrid Visualization](https://raw.githubusercontent.com/Xaxis/jquery.devgrid/master/test/jquery_devgrid_visualization_demo.gif)
+![DevGrid Visualization](https://raw.githubusercontent.com/Xaxis/jquery.devgrid/master/test/jquery_devgrid_visualization_demo_2.gif)
 
 #### DevGrid Breakpoint Tracking
 
-![DevGrid Breakpoint Tracking](https://raw.githubusercontent.com/Xaxis/jquery.devgrid/master/test/jquery_devgrid_tracking_demo.gif)
+![DevGrid Breakpoint Tracking](https://raw.githubusercontent.com/Xaxis/jquery.devgrid/master/test/jquery_devgrid_tracking_demo_2.gif)
 
 ## Author
 
@@ -87,6 +87,10 @@ $('body').devgrid({
 });
 ```
 
+You can also toggle which grid visualizations are showing using the UI toggle controls.
+
+![DevGrid Breakpoint Tracking](https://raw.githubusercontent.com/Xaxis/jquery.devgrid/master/test/jquery_devgrid_toggle_demo.gif)
+
 ### Modify DevGrid Visualization Styles
 
 It's easy to alter any of the styles of the DevGrid Visualization you want.
@@ -118,7 +122,7 @@ $('body').devgrid({
 
 The result:
 
-![DevGrid Visualization Styles](https://raw.githubusercontent.com/Xaxis/jquery.devgrid/master/test/jquery_devgrid_style_demo.png)
+![DevGrid Visualization Styles](https://raw.githubusercontent.com/Xaxis/jquery.devgrid/master/test/jquery_devgrid_style_demo_2.png)
 
 ### Using DevGrid Methods
 
