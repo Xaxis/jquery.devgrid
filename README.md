@@ -5,7 +5,7 @@ Version 1.0.0
 ## Summary
 
 jQuery.devgrid serves two purposes. It is useful for the visualization of responsive site grids while providing the 
-means for tracking which breakpoint is active in your frontend code.
+means for tracking which breakpoints are active in your frontend code.
 
 #### DevGrid Visualization
 
@@ -37,12 +37,12 @@ $('body').devgrid({
 
 ### Tracking w/o DevGrid Visualization
 
-When you have no need to see your site's breakpoint visualization but still would like to have the `<body>` element of 
-your site updated with the `data-devgrid-breakpoint` attribute so you can track which breakpoint is active in your site
-programmatically, do the following:
+When you have no need to see your site's breakpoint visualizations but still would like to have the `<body>` element of 
+your site updated with the `data-devgrid-x-breakpoint` and `data-devgrid-y-breakpoint` attributes so you can track which 
+breakpoint are active programmatically, do the following:
 
 ```javascript
-// Basic jQuery.devgrid initialization 
+// jQuery.devgrid initialization  w/o visualization 
 $('body').devgrid({
     columns: 12,
     columnWidth: '40px',
@@ -60,13 +60,30 @@ you need to fire your code when you need to.
 If you don't need to track your current active breakpoint in code you can disable tracking as follows:
 
 ```javascript
-// Basic jQuery.devgrid initialization 
+// jQuery.devgrid initialization w/o tracking
 $('body').devgrid({
     columns: 12,
     columnWidth: '40px',
     gutterWidth: '20px',
     visible: true,
     track: false
+});
+```
+
+### Initialize DevGrid Visualization w/ Horizontal Grid
+
+It is sometimes useful to track vertical changes in your responsive design as well. Enabling the horizontal grid gives
+you the ability to track and visualize horizontal screen space. Vertical tracking is accomplished by monitoring the 
+`data-devgrid-y-breakpoint` on the `<body>` element.
+
+```javascript
+// jQuery.devgrid initialization w/ horizontal grid
+$('body').devgrid({
+    columns: 12,
+    columnWidth: '40px',
+    gutterWidth: '20px',
+    visible: true,
+    horizontal: true
 });
 ```
 
@@ -152,6 +169,11 @@ Works in IE9+, Chrome 14+, Safari 4+, Firefox 3.0+, Opera 10+.
 See `test.html` in tests directory.
 
 ### Changelog
+
+#### Version 1.1.0
+
+* added horizontal grid visualization and tracking
+* added grid toggle ui control
 
 #### Version 1.0.0
 
