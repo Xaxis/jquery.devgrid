@@ -30,6 +30,16 @@
 
     // Toggle devgrid visibility
     $.fn.devgrid('toggle');
+
+    // Devgrid with horizontal rows
+    $('body').devgrid({
+        columns: 24,
+        columnWidth: '40px',
+        gutterWidth: '20px',
+        visible: true,
+        track: true,
+        horizontal: true
+    });
 </script>
 
 </body>
