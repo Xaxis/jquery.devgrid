@@ -36,7 +36,6 @@
       },
       gutterStyle: {
         position: 'absolute',
-        top: 0,
         height: '100%',
         'box-sizing': 'border-box',
         background: 'rgba(255, 255, 0, 0.4)'
@@ -122,9 +121,12 @@
         '@media only screen and (max-width: ' + indicator_break_point + column_width_unit + ') {\n' +
         ' .devgrid .devgrid-col' + i + ' {\n' +
         '   background: rgba(0, 255, 0, 0.3) !important;\n' +
+        '   opacity: .5;\n' +
+        '   transition: opacity 0.6s ease;\n' +
         ' }\n' +
         ' .devgrid .devgrid-col' + i + ' .devgrid-gutter {\n' +
         '   background: rgba(0, 255, 255, 0.2) !important;\n' +
+        '   border-right: 1px dashed deeppink;\n' +
         ' }\n' +
         '}\n';
 
@@ -179,15 +181,18 @@
         '@media only screen and (max-height: ' + indicator_break_point + column_width_unit + ') {\n' +
         ' .devgrid .devgrid-row' + i + ' {\n' +
         '   background: rgba(0, 255, 0, 0.3) !important;\n' +
+        '   opacity: .5;\n' +
+        '   transition: opacity 0.6s ease;\n' +
         ' }\n' +
         ' .devgrid .devgrid-row' + i + ' .devgrid-gutter {\n' +
         '   background: rgba(0, 255, 255, 0.2) !important;\n' +
+        '   border-bottom: 1px dashed deeppink;\n' +
         ' }\n' +
         '}\n';
 
       // Construct horizontal row breakpoint media query
       styles[0].textContent +=
-        '@media only screen and (max-height: ' + (column_break_point - gutter_width) + column_width_unit + ') {\n' +
+        '@media only screen and (max-height: ' + (column_break_point) + column_width_unit + ') {\n' +
         ' .devgrid .devgrid-row' + i + ' {\n' +
         '   display: none;\n' +
         ' }\n' +
@@ -201,7 +206,7 @@
         .css($.extend(this._defaults.numBoxStyle, this.options.numBoxStyle))
         .css({
           width: 'auto',
-          'min-width': '10px',
+          'min-width': '20px',
           height: '100%',
           padding: '0 4px',
           'line-height': this.options.columnWidth
@@ -234,7 +239,7 @@
         .css({
           width: '100%',
           height: gutter_width + gutter_width_unit,
-          top: (-gutter_width) + gutter_width_unit
+          bottom: (-gutter_width) + gutter_width_unit
         });
 
       // Append gutters to columns
