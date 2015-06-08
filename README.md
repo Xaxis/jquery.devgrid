@@ -106,6 +106,25 @@ You can also toggle which grid visualizations are showing using the UI toggle co
 
 ![DevGrid Breakpoint Tracking](https://raw.githubusercontent.com/Xaxis/jquery.devgrid/master/test/jquery_devgrid_toggle_demo.gif)
 
+### Centered DevGrid Visualization
+
+```javascript
+// jQuery.devgrid initialization with only info box
+$('body').devgrid({
+    columns: 12,
+    columnWidth: '40px',
+    gutterWidth: '20px',
+    visible: true,
+    vertical: false,
+    horizontal: false,
+    gridStyle: {
+        'max-width': '960px'
+    }
+});
+```
+
+Centering the overlay on screen is as simple as applying a `max-width` to the `gridStyle` properties object.
+
 ### Modify DevGrid Visualization Styles
 
 It's easy to alter any of the styles of the DevGrid Visualization you want.

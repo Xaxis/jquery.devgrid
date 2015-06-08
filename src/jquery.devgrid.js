@@ -19,8 +19,11 @@
       gridStyle: {
         display: 'none',
         position: 'fixed',
-        top: 0,
         left: 0,
+        right: 0,
+        'margin-left': 'auto',
+        'margin-right': 'auto',
+        top: 0,
         width: '100%',
         height: '100%',
         'z-index': '99999',
@@ -71,13 +74,13 @@
     this.elm = $(element);
     this.options = $.extend( {}, defaults, options);
     this._defaults = defaults;
-    this.init();
+    this.init(options);
   }
 
   /**
    * Initialization method called with devgrid instantiation
    */
-  Plugin.prototype.init = function() {
+  Plugin.prototype.init = function( options ) {
     var
       plugin            = this,
       vert_devgrid      = $('<div class="devgrid devgrid-vert">'),

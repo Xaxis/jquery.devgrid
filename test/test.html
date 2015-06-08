@@ -41,6 +41,20 @@
         vertical: false,
         horizontal: true
     });
+
+    // Centered devgrid
+    $('body').devgrid({
+        columns: 24,
+        columnWidth: '40px',
+        gutterWidth: '20px',
+        visible: true,
+        track: true,
+        vertical: true,
+        horizontal: false,
+        gridStyle: {
+            'max-width': '1440px'
+        }
+    });
 </script>
 
 </body>
