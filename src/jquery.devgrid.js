@@ -30,7 +30,6 @@
         width: '20px',
         height: '100%',
         float: 'left',
-        'margin-left': '20px',
         background: 'rgba(0, 191, 255, 0.15)',
         position: 'relative',
         'box-sizing': 'border-box'
@@ -154,7 +153,7 @@
         .css($.extend(this._defaults.columnStyle, this.options.columnStyle))
         .css({
           width: this.options.columnWidth,
-          'margin-left': this.options.gutterWidth
+          'margin-right': this.options.gutterWidth
         });
 
       // Create/append gutter "columns"
@@ -162,7 +161,7 @@
         .css($.extend(this._defaults.gutterStyle, this.options.gutterStyle))
         .css({
           width: gutter_width + gutter_width_unit,
-          left: (-gutter_width) + gutter_width_unit
+          right: (-gutter_width) + gutter_width_unit
         });
 
       // Append gutters to columns
@@ -188,7 +187,7 @@
 
       // Construct horizontal row breakpoint media query
       styles[0].textContent +=
-        '@media only screen and (max-height: ' + column_break_point + column_width_unit + ') {\n' +
+        '@media only screen and (max-height: ' + (column_break_point - gutter_width) + column_width_unit + ') {\n' +
         ' .devgrid .devgrid-row' + i + ' {\n' +
         '   display: none;\n' +
         ' }\n' +
@@ -202,7 +201,7 @@
         .css($.extend(this._defaults.numBoxStyle, this.options.numBoxStyle))
         .css({
           width: 'auto',
-          'min-width': '20px',
+          'min-width': '10px',
           height: '100%',
           padding: '0 4px',
           'line-height': this.options.columnWidth
@@ -221,7 +220,7 @@
         .css({
           width: '100%',
           'margin-left': 0,
-          'margin-top': this.options.gutterWidth,
+          'margin-bottom': this.options.gutterWidth,
           float: 'none',
           height: this.options.columnWidth
         });
