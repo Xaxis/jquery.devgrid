@@ -18,6 +18,7 @@
       horizontal: false,
       toggleGutter: false,
       breakpoints: [],
+      distributeGutter: false,
       gridStyle: {
         display: 'none',
         position: 'fixed',
@@ -112,6 +113,11 @@
         column_break_point      = parseFloat(column_width_total * i),
         indicator_break_point   = column_break_point + column_width;
 
+      // Modify gutter width if distributed
+      if (this.options.distributeGutter) {
+        gutter_width = gutter_width / 2;
+      }
+
       // Handle some errors
       if (gutter_width_unit != column_width_unit) {
         throw new Error('jQuery.' + plugin_name + ' :: ' + ' columnWidth and gutterWidth unit type must be the same! Currently ' + gutter_width_unit + ' vs ' + column_width_unit);
@@ -152,11 +158,19 @@
       var column = $('<div class="devgrid-col devgrid-col' + i + '"></div>');
       var l_gutter = $('<div class="devgrid-gutter devgrid-l-gutter">');
 
+      // For distributed gutters create two gutters per column
+      var r_gutter = (this.options.distributeGutter) ? $('<div class="devgrid-gutter devgrid-r-gutter">') : null;
+
       // Append number box to column
       column.append(vert_number_box);
 
       // Append gutter to column
       column.append(l_gutter);
+
+      // Append secondary gutter to column when distributed gutters
+      if (this.options.distributeGutter) {
+        column.append(r_gutter);
+      }
 
       // Apply base styles to column and gutter
       column
@@ -165,6 +179,7 @@
           width: this.options.columnWidth
         });
       l_gutter
+        .add(r_gutter)
         .css($.extend(this._defaults.gutterStyle, this.options.gutterStyle))
         .css({
           width: gutter_width + gutter_width_unit
@@ -172,26 +187,68 @@
 
       // Gutters on the left of columns
       if (this.options.toggleGutter) {
-        column
-          .css({
-            'margin-left': this.options.gutterWidth
-          });
-        l_gutter
-          .css({
-            left: (-gutter_width) + gutter_width_unit
-          });
+
+        // Distributed gutters
+        if (this.options.distributeGutter) {
+          column
+            .css({
+              'margin-left': gutter_width + gutter_width_unit,
+              'margin-right': gutter_width + gutter_width_unit
+            });
+          l_gutter
+            .css({
+              right: (-gutter_width) + gutter_width_unit
+            });
+          r_gutter
+            .css({
+              left: (-gutter_width) + gutter_width_unit
+            });
+        }
+
+        // Non-distributed gutters
+        else {
+          column
+            .css({
+              'margin-left': this.options.gutterWidth
+            });
+          l_gutter
+            .css({
+              left: (-gutter_width) + gutter_width_unit
+            });
+        }
       }
 
       // Gutters on right of columns
       else {
-        column
-          .css({
-            'margin-right': this.options.gutterWidth
-          });
-        l_gutter
-          .css({
-            right: (-gutter_width) + gutter_width_unit
-          });
+
+        // Distributed gutters
+        if (this.options.distributeGutter) {
+          column
+            .css({
+              'margin-left': gutter_width + gutter_width_unit,
+              'margin-right': gutter_width + gutter_width_unit
+            });
+          l_gutter
+            .css({
+              right: (-gutter_width) + gutter_width_unit
+            });
+          r_gutter
+            .css({
+              left: (-gutter_width) + gutter_width_unit
+            });
+        }
+
+        // Non-distributed gutters
+        else {
+          column
+            .css({
+              'margin-right': this.options.gutterWidth
+            });
+          l_gutter
+            .css({
+              right: (-gutter_width) + gutter_width_unit
+            });
+        }
       }
 
       // Add column/gutter to grid
@@ -240,11 +297,19 @@
       var row = $('<div class="devgrid-row devgrid-row' + i + '"></div>');
       var t_gutter = $('<div class="devgrid-gutter devgrid-t-gutter">');
 
+      // For distributed gutters create two gutters per row
+      var b_gutter = (this.options.distributeGutter) ? $('<div class="devgrid-gutter devgrid-b-gutter">') : null;
+
       // Add row to grid
       horz_devgrid.append(row);
 
       // Append gutters to columns
       row.append(t_gutter);
+
+      // Append secondary gutter to column when distributed gutters
+      if (this.options.distributeGutter) {
+        row.append(b_gutter);
+      }
 
       // Apply base styles to row and gutter
       row
@@ -256,6 +321,7 @@
           height: this.options.columnWidth
         });
       t_gutter
+        .add(b_gutter)
         .css($.extend(this._defaults.gutterStyle, this.options.gutterStyle))
         .css({
           width: '100%',
@@ -264,26 +330,68 @@
 
       // Gutters above row
       if (this.options.toggleGutter) {
-        row
-          .css({
-            'margin-top': this.options.gutterWidth
-          });
-        t_gutter
-          .css({
-            top: (-gutter_width)
-          });
+
+        // Distributed gutters
+        if (this.options.distributeGutter) {
+          row
+            .css({
+              'margin-top': (gutter_width) + gutter_width_unit,
+              'margin-bottom': (gutter_width * 2) + gutter_width_unit
+            });
+          t_gutter
+            .css({
+              top: (-gutter_width)
+            });
+          b_gutter
+            .css({
+              bottom: (-gutter_width)
+            });
+        }
+
+        // Non-distributed gutters
+        else {
+          row
+            .css({
+              'margin-top': this.options.gutterWidth
+            });
+          t_gutter
+            .css({
+              top: (-gutter_width)
+            });
+        }
       }
 
       // Gutters below row
       else {
-        row
-          .css({
-            'margin-bottom': this.options.gutterWidth
-          });
-        t_gutter
-          .css({
-            bottom: (-gutter_width) + gutter_width_unit
-          });
+
+        // Distributed gutters
+        if (this.options.distributeGutter) {
+          row
+            .css({
+              'margin-top': (gutter_width) + gutter_width_unit,
+              'margin-bottom': (gutter_width * 2) + gutter_width_unit
+            });
+          t_gutter
+            .css({
+              top: (-gutter_width)
+            });
+          b_gutter
+            .css({
+              bottom: (-gutter_width)
+            });
+        }
+
+        // Non-distributed gutters
+        else {
+          row
+            .css({
+              'margin-bottom': this.options.gutterWidth
+            });
+          t_gutter
+            .css({
+              bottom: (-gutter_width) + gutter_width_unit
+            });
+        }
       }
 
       // Apply row styles
@@ -366,6 +474,11 @@
       ? '<div><input class="devgrid-control devgrid-control-toggle-bp-visu" type="checkbox" checked><strong> Toggle Breakpoints</strong></div>'
       : '';
 
+    // Do we show the toggle gutter option
+    var toggle_gutter = (!options.distributeGutter)
+      ? '<div><input class="devgrid-control devgrid-control-toggle-gutter" type="checkbox" ' + (this.options.toggleGutter ? 'checked' : '') + ' ><strong> Toggle Gutter</strong></div>'
+      : '';
+
     // Add elements to info box
     info_box.append(
       '<div class="devgrid-info-row devgrid-column-total"><strong>Breakpoints X:</strong> <span></span></div>' +
@@ -381,7 +494,8 @@
         '<div>' +
           '<div><input class="devgrid-control devgrid-control devgrid-control-x-grid" type="checkbox" ' + (this.options.vertical ? 'checked' : '') + ' ><strong> X Grid</strong></div>' +
           '<div><input class="devgrid-control devgrid-control-y-grid" type="checkbox" ' + (this.options.horizontal ? 'checked' : '') + ' ><strong> Y Grid</strong></div>' +
-          '<div><input class="devgrid-control devgrid-control-toggle-gutter" type="checkbox" ' + (this.options.toggleGutter ? 'checked' : '') + ' ><strong> Toggle Gutter</strong></div>' +
+          toggle_gutter +
+          '<div><input class="devgrid-control devgrid-control-distribute-gutter" type="checkbox" ' + (this.options.distributeGutter ? 'checked' : '') + ' ><strong> Distribute Gutter</strong></div>' +
           bp_visu +
         '</div>' +
       '</div>'
@@ -515,6 +629,18 @@
           $('.devgrid-bp-visu').show();
         } else {
           $('.devgrid-bp-visu').hide();
+        }
+      }
+
+      // Toggle gutter location
+      else if (target.hasClass('devgrid-control-distribute-gutter')) {
+        checked = $('.devgrid-control-distribute-gutter:checked').length;
+        if (checked) {
+          $(element).devgrid($.extend({}, options, {distributeGutter: true}));
+          $('.devgrid-control-toggle-gutter').parent().hide();
+        } else {
+          $(element).devgrid($.extend({}, options, {distributeGutter: false}));
+          $('.devgrid-control-toggle-gutter').parent().show();
         }
       }
     };

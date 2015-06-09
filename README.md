@@ -141,6 +141,22 @@ $('body').devgrid({
 });
 ```
 
+### Distribute Column Gutters
+
+Many gutter systems have half of the gutter space on each side of the columns.
+
+```javascript
+// Distributed Gutter
+$('body').devgrid({
+    columns: 16,
+    columnWidth: '40px',
+    gutterWidth: '20px',
+    visible: true,
+    track: true,
+    distributeGutter: true
+});
+```
+
 ### Display Major Breakpoints Visualization
 
 It's often handy to visualize your major breakpoints such as mobile, tablet, etc. 
