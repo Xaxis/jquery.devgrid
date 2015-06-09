@@ -17,6 +17,7 @@
       vertical: true,
       horizontal: false,
       toggleGutter: false,
+      breakpoints: [],
       gridStyle: {
         display: 'none',
         position: 'fixed',
@@ -166,7 +167,7 @@
       l_gutter
         .css($.extend(this._defaults.gutterStyle, this.options.gutterStyle))
         .css({
-          width: gutter_width + gutter_width_unit,
+          width: gutter_width + gutter_width_unit
         });
 
       // Gutters on the left of columns
@@ -292,10 +293,6 @@
       row.append(horz_number_box);
     }
 
-    /*
-     * CREATE - Controls and event handlers
-     */
-
     // Append media queries
     $('head').append(styles);
 
@@ -304,8 +301,72 @@
     plugin.elm.append(horz_devgrid);
     plugin.elm.append(overlay_devgrid);
 
+    /*
+     * CREATE - Breakpoint visualizations
+     */
+
+    // Proceed when specified by user config
+    if (this.options.breakpoints.length) {
+      var last_bp = 0;
+      var bps = this.options.breakpoints;
+      for (var i = 0; i < bps.length; i++) {
+
+        // Reference breakpoint object
+        var bp_obj = bps[i];
+
+        // Create breakpoint visualization element
+        var bp_elm = $('<div class="devgrid-bp-visu">');
+
+        // Apply styles
+        bp_elm
+          .css({
+            position: 'absolute',
+            height: '100%',
+            'border-right': '1px solid black',
+            width: (last_bp == 0) ? 'calc(' + bp_obj.bp + ')' : 'calc(' + bp_obj.bp + ' - ' + last_bp + ')',
+            left: (last_bp == 0) ? 'calc(' + bp_obj.bp + ' - ' + bp_obj.bp  + ')' : 'calc(' + last_bp  + ')'
+          })
+          .css(bp_obj.css);
+
+        // Append element to grid
+        vert_devgrid.append(bp_elm);
+
+        // Create bp tag
+        var bp_tag = $('<div class="devgrid-bp-tag">' + bp_obj.tag + '</div>');
+
+        // Style tag
+        bp_tag
+          .css($.extend(this._defaults.numBoxStyle, this.options.numBoxStyle))
+          .css({
+            width: 'auto',
+            'max-height': '24px',
+            padding: '6px 4px',
+            position: 'absolute',
+            right: 0,
+            top: 0
+          });
+
+        // Append tag
+        bp_elm.append(bp_tag);
+
+        // Update last breakpoint position value
+        last_bp = bp_obj.bp;
+      }
+    }
+
+    /*
+     * CREATE - Controls and event handlers
+     */
+
     // Create info box
     var info_box = $('<div class="devgrid-info-box">');
+
+    // Do we show the major breakpoint visualization?
+    var bp_visu = (this.options.breakpoints.length)
+      ? '<div><input class="devgrid-control devgrid-control-toggle-bp-visu" type="checkbox" checked><strong> Toggle Breakpoints</strong></div>'
+      : '';
+
+    // Add elements to info box
     info_box.append(
       '<div class="devgrid-info-row devgrid-column-total"><strong>Breakpoints X:</strong> <span></span></div>' +
       '<div class="devgrid-info-row devgrid-row-total"><strong>Breakpoints Y:</strong> <span></span></div>' +
@@ -321,6 +382,7 @@
           '<div><input class="devgrid-control devgrid-control devgrid-control-x-grid" type="checkbox" ' + (this.options.vertical ? 'checked' : '') + ' ><strong> X Grid</strong></div>' +
           '<div><input class="devgrid-control devgrid-control-y-grid" type="checkbox" ' + (this.options.horizontal ? 'checked' : '') + ' ><strong> Y Grid</strong></div>' +
           '<div><input class="devgrid-control devgrid-control-toggle-gutter" type="checkbox" ' + (this.options.toggleGutter ? 'checked' : '') + ' ><strong> Toggle Gutter</strong></div>' +
+          bp_visu +
         '</div>' +
       '</div>'
     );
@@ -443,6 +505,16 @@
           $(element).devgrid($.extend({}, options, {toggleGutter: true}));
         } else {
           $(element).devgrid($.extend({}, options, {toggleGutter: false}));
+        }
+      }
+
+      // Toggle breakpoint visualization
+      else if (target.hasClass('devgrid-control-toggle-bp-visu')) {
+        checked = $('.devgrid-control-toggle-bp-visu:checked').length;
+        if (checked) {
+          $('.devgrid-bp-visu').show();
+        } else {
+          $('.devgrid-bp-visu').hide();
         }
       }
     };

@@ -141,6 +141,54 @@ $('body').devgrid({
 });
 ```
 
+### Display Major Breakpoints Visualization
+
+It's often handy to visualize your major breakpoints such as mobile, tablet, etc. 
+
+```javascript
+    // Draw breakpoints
+    $('body').devgrid({
+        columns: 24,
+        columnWidth: '40px',
+        gutterWidth: '20px',
+        visible: true,
+        track: true,
+        gridStyle: {
+            'max-width': '1440px'
+        },
+        breakpoints: [
+            {
+                bp: '480px',
+                tag: 'Mobile',
+                css: {
+                    background: 'rgba(85,98,112, 0.4)'
+                }
+            },
+            {
+                bp: '780px',
+                tag: 'Tablet',
+                css: {
+                    background: 'rgba(78,205,196, 0.4)'
+                }
+            },
+            {
+                bp: '960px',
+                tag: 'Desktop',
+                css: {
+                    background: 'rgba(199,244,100, 0.4)'
+                }
+            },
+            {
+                bp: '1440px',
+                tag: 'Wide',
+                css: {
+                    background: 'rgba(255,107,107, 0.4)'
+                }
+            }
+        ]
+    });
+```
+
 ### Modify DevGrid Visualization Styles
 
 It's easy to alter any of the styles of the DevGrid Visualization you want.
