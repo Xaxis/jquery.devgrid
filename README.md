@@ -108,6 +108,8 @@ You can also toggle which grid visualizations are showing using the UI toggle co
 
 ### Centered DevGrid Visualization
 
+Centering the overlay on screen is as simple as applying a `max-width` to the `gridStyle` properties object.
+
 ```javascript
 // jQuery.devgrid initialization with only info box
 $('body').devgrid({
@@ -123,7 +125,21 @@ $('body').devgrid({
 });
 ```
 
-Centering the overlay on screen is as simple as applying a `max-width` to the `gridStyle` properties object.
+### Toggling Gutter/Column Order
+
+You can also easily swap the order of gutters relative to columns.
+
+```javascript
+// Toggled gutter
+$('body').devgrid({
+    columns: 16,
+    columnWidth: '40px',
+    gutterWidth: '20px',
+    visible: true,
+    track: true,
+    toggleGutter: true
+});
+```
 
 ### Modify DevGrid Visualization Styles
 

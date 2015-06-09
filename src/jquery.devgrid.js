@@ -16,6 +16,7 @@
       track: true,
       vertical: true,
       horizontal: false,
+      toggleGutter: false,
       gridStyle: {
         display: 'none',
         position: 'fixed',
@@ -74,13 +75,13 @@
     this.elm = $(element);
     this.options = $.extend( {}, defaults, options);
     this._defaults = defaults;
-    this.init(options);
+    this.init(element, options);
   }
 
   /**
    * Initialization method called with devgrid instantiation
    */
-  Plugin.prototype.init = function( options ) {
+  Plugin.prototype.init = function( element, options ) {
     var
       plugin            = this,
       vert_devgrid      = $('<div class="devgrid devgrid-vert">'),
@@ -129,7 +130,6 @@
         ' }\n' +
         ' .devgrid .devgrid-col' + i + ' .devgrid-gutter {\n' +
         '   background: rgba(0, 255, 255, 0.2) !important;\n' +
-        '   border-right: 1px dashed deeppink;\n' +
         ' }\n' +
         '}\n';
 
@@ -147,32 +147,53 @@
       // Apply number box styles
       vert_number_box.css($.extend(this._defaults.numBoxStyle, this.options.numBoxStyle));
 
-      // Create columns
+      // Create column/gutter
       var column = $('<div class="devgrid-col devgrid-col' + i + '"></div>');
+      var l_gutter = $('<div class="devgrid-gutter devgrid-l-gutter">');
 
       // Append number box to column
       column.append(vert_number_box);
 
-      // Apply column styles
+      // Append gutter to column
+      column.append(l_gutter);
+
+      // Apply base styles to column and gutter
       column
         .css($.extend(this._defaults.columnStyle, this.options.columnStyle))
         .css({
-          width: this.options.columnWidth,
-          'margin-right': this.options.gutterWidth
+          width: this.options.columnWidth
         });
-
-      // Create/append gutter "columns"
-      var l_gutter = $('<div class="devgrid-gutter devgrid-l-gutter">')
+      l_gutter
         .css($.extend(this._defaults.gutterStyle, this.options.gutterStyle))
         .css({
           width: gutter_width + gutter_width_unit,
-          right: (-gutter_width) + gutter_width_unit
         });
 
-      // Append gutters to columns
-      column.append(l_gutter);
+      // Gutters on the left of columns
+      if (this.options.toggleGutter) {
+        column
+          .css({
+            'margin-left': this.options.gutterWidth
+          });
+        l_gutter
+          .css({
+            left: (-gutter_width) + gutter_width_unit
+          });
+      }
 
-      // Add column to grid
+      // Gutters on right of columns
+      else {
+        column
+          .css({
+            'margin-right': this.options.gutterWidth
+          });
+        l_gutter
+          .css({
+            right: (-gutter_width) + gutter_width_unit
+          });
+      }
+
+      // Add column/gutter to grid
       vert_devgrid.append(column);
 
       /*
@@ -189,7 +210,6 @@
         ' }\n' +
         ' .devgrid .devgrid-row' + i + ' .devgrid-gutter {\n' +
         '   background: rgba(0, 255, 255, 0.2) !important;\n' +
-        '   border-bottom: 1px dashed deeppink;\n' +
         ' }\n' +
         '}\n';
 
@@ -215,38 +235,61 @@
           'line-height': this.options.columnWidth
         });
 
-      // Create rows
+      // Create row/gutter
       var row = $('<div class="devgrid-row devgrid-row' + i + '"></div>');
+      var t_gutter = $('<div class="devgrid-gutter devgrid-t-gutter">');
 
-      // Append number box to column
-      row.append(horz_number_box);
+      // Add row to grid
+      horz_devgrid.append(row);
 
-      // Apply row styles
-      var n = (i-1);
+      // Append gutters to columns
+      row.append(t_gutter);
+
+      // Apply base styles to row and gutter
       row
         .css($.extend(this._defaults.columnStyle, this.options.columnStyle))
         .css({
           width: '100%',
           'margin-left': 0,
-          'margin-bottom': this.options.gutterWidth,
           float: 'none',
           height: this.options.columnWidth
         });
-
-      // Add row to grid
-      horz_devgrid.append(row);
-
-      // Create/append gutter "rows"
-      var t_gutter = $('<div class="devgrid-gutter devgrid-t-gutter">')
+      t_gutter
         .css($.extend(this._defaults.gutterStyle, this.options.gutterStyle))
         .css({
           width: '100%',
-          height: gutter_width + gutter_width_unit,
-          bottom: (-gutter_width) + gutter_width_unit
+          height: gutter_width + gutter_width_unit
         });
 
-      // Append gutters to columns
-      row.append(t_gutter);
+      // Gutters above row
+      if (this.options.toggleGutter) {
+        row
+          .css({
+            'margin-top': this.options.gutterWidth
+          });
+        t_gutter
+          .css({
+            top: (-gutter_width)
+          });
+      }
+
+      // Gutters below row
+      else {
+        row
+          .css({
+            'margin-bottom': this.options.gutterWidth
+          });
+        t_gutter
+          .css({
+            bottom: (-gutter_width) + gutter_width_unit
+          });
+      }
+
+      // Apply row styles
+      var n = (i-1);
+
+      // Append number box to column
+      row.append(horz_number_box);
     }
 
     /*
@@ -274,9 +317,10 @@
       '<div class="devgrid-info-row devgrid-grid-width"><strong>Grid Size:</strong> <span></span></div>' +
       '<div class="devgrid-info-row devgrid-active-breakpoint"><strong>Active Breakpoint:</strong> <span></span></div>' +
       '<div class="devgrid-controls">' +
-        '<div class="devgrid-control">' +
-          '<div><strong>X Grid: </strong> <input class="devgrid-control-x-grid" type="checkbox" ' + (this.options.vertical ? 'checked' : '') + ' ></div>' +
-          '<div><strong>Y Grid: </strong> <input class="devgrid-control-y-grid" type="checkbox" ' + (this.options.horizontal ? 'checked' : '') + ' ></div>' +
+        '<div>' +
+          '<div><input class="devgrid-control devgrid-control devgrid-control-x-grid" type="checkbox" ' + (this.options.vertical ? 'checked' : '') + ' ><strong> X Grid</strong></div>' +
+          '<div><input class="devgrid-control devgrid-control-y-grid" type="checkbox" ' + (this.options.horizontal ? 'checked' : '') + ' ><strong> Y Grid</strong></div>' +
+          '<div><input class="devgrid-control devgrid-control-toggle-gutter" type="checkbox" ' + (this.options.toggleGutter ? 'checked' : '') + ' ><strong> Toggle Gutter</strong></div>' +
         '</div>' +
       '</div>'
     );
@@ -362,30 +406,47 @@
       overlay_devgrid.css('display', 'block');
     }
 
-    // Handle toggle controls
+    // Handle show/hide toggle controls
     var handleDevgridToggleControls = function(e) {
       var
         target    = $(e.currentTarget),
         checked   = 0;
 
-      // Determine which controls is being clicked
+      // Show/hide X grid
       if (target.hasClass('devgrid-control-x-grid')) {
         checked = $('.devgrid-control-x-grid:checked').length;
         if (checked) {
+          options.vertical = true;
           vert_devgrid.show();
         } else {
+          options.vertical = false;
           vert_devgrid.hide();
         }
-      } else if (target.hasClass('devgrid-control-y-grid')) {
+      }
+
+      // Show/hide Y grid
+      else if (target.hasClass('devgrid-control-y-grid')) {
         checked = $('.devgrid-control-y-grid:checked').length;
         if (checked) {
+          options.horizontal = true;
           horz_devgrid.show();
         } else {
+          options.horizontal = false;
           horz_devgrid.hide();
         }
       }
+
+      // Toggle gutter location
+      else if (target.hasClass('devgrid-control-toggle-gutter')) {
+        checked = $('.devgrid-control-toggle-gutter:checked').length;
+        if (checked) {
+          $(element).devgrid($.extend({}, options, {toggleGutter: true}));
+        } else {
+          $(element).devgrid($.extend({}, options, {toggleGutter: false}));
+        }
+      }
     };
-    $('.devgrid-control-x-grid, .devgrid-control-y-grid').on('click', handleDevgridToggleControls);
+    $('.devgrid-control').on('click', handleDevgridToggleControls);
   };
 
 

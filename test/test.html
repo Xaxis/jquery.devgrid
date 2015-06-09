@@ -32,6 +32,7 @@
     $.fn.devgrid('toggle');
 
     // Devgrid with horizontal rows
+    /*
     $('body').devgrid({
         columns: 24,
         columnWidth: '40px',
@@ -41,8 +42,10 @@
         vertical: false,
         horizontal: true
     });
+    */
 
     // Centered devgrid
+    /*
     $('body').devgrid({
         columns: 24,
         columnWidth: '40px',
@@ -54,6 +57,17 @@
         gridStyle: {
             'max-width': '1440px'
         }
+    });
+    */
+
+    // Toggled gutter
+    $('body').devgrid({
+        columns: 16,
+        columnWidth: '40px',
+        gutterWidth: '20px',
+        visible: true,
+        track: true,
+        toggleGutter: true
     });
 </script>
 
