@@ -593,10 +593,10 @@
         checked = $('.devgrid-control-x-grid:checked').length;
         if (checked) {
           options.vertical = true;
-          vert_devgrid.show();
+          vert_devgrid.find('.devgrid-col, .devgrid-gutter').show();
         } else {
           options.vertical = false;
-          vert_devgrid.hide();
+          vert_devgrid.find('.devgrid-col, .devgrid-gutter').hide();
         }
       }
 
