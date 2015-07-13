@@ -89,7 +89,18 @@
       vert_devgrid      = $('<div class="devgrid devgrid-vert">'),
       horz_devgrid      = $('<div class="devgrid devgrid-horz">'),
       overlay_devgrid   = $('<div class="devgrid devgrid-overlay">'),
-      styles            = $('<style class="devgrid-styles">');
+      styles            = $('<style class="devgrid-styles">'),
+      body_style        = document.body.currentStyle || window.getComputedStyle(document.body, ""),
+      scroll_active     = body_style['overflow-y'] == 'hidden' ? false : true,
+      scroll_width      = 0;
+
+    // Determine the scroll bar width
+    if (scroll_active) {
+      var scroll_parent = $('<div style="width:50px; height:50px; overflow:auto"><div/></div>').appendTo('body');
+      var scroll_child = scroll_parent.children();
+      scroll_width = scroll_child.innerWidth() - scroll_child.height(99).innerWidth();
+      scroll_parent.remove();
+    }
 
     // Remove previous devgrids and media query style elements
     $('.devgrid').remove();
@@ -129,7 +140,7 @@
 
       // Construct vertical column breakpoint indicator media query
       styles[0].textContent +=
-        '@media only screen and (max-width: ' + indicator_break_point + column_width_unit + ') {\n' +
+        '@media only screen and (max-width: ' + (indicator_break_point) + column_width_unit + ') {\n' +
         ' .devgrid .devgrid-col' + i + ' {\n' +
         '   background: rgba(0, 255, 0, 0.3) !important;\n' +
         '   opacity: .5;\n' +
@@ -142,7 +153,7 @@
 
       // Construct vertical column breakpoint media query
       styles[0].textContent +=
-        '@media only screen and (max-width: ' + column_break_point + column_width_unit + ') {\n' +
+        '@media only screen and (max-width: ' + (column_break_point) + column_width_unit + ') {\n' +
         ' .devgrid .devgrid-col' + i + ' {\n' +
         '   display: none;\n' +
         ' }\n' +
@@ -483,21 +494,22 @@
     info_box.append(
       '<div class="devgrid-info-row devgrid-column-total"><strong>Breakpoints X:</strong> <span></span></div>' +
       '<div class="devgrid-info-row devgrid-row-total"><strong>Breakpoints Y:</strong> <span></span></div>' +
-      '<div class="devgrid-info-row devgrid-window-width"><strong>Window X:</strong> <span></span></div>' +
-      '<div class="devgrid-info-row devgrid-window-height"><strong>Window Y:</strong> <span></span></div>' +
+      '<div class="devgrid-info-row devgrid-window-height"><strong>Window H:</strong> <span></span></div>' +
+      '<div class="devgrid-info-row devgrid-window-width"><strong>Window W:</strong> <span></span></div>' +
+      '<div class="devgrid-info-row devgrid-viewport-width"><strong>Viewport W:</strong> <span></span></div>' +
       '<div class="devgrid-info-row devgrid-gutter-width"><strong>Gutter Size:</strong> <span></span></div>' +
       '<div class="devgrid-info-row devgrid-column-width"><strong>Unit Size:</strong> <span></span></div>' +
       '<div class="devgrid-info-row devgrid-grid-column-width"><strong>Unit Total Size:</strong> <span></span></div>' +
       '<div class="devgrid-info-row devgrid-grid-width"><strong>Grid Size:</strong> <span></span></div>' +
       '<div class="devgrid-info-row devgrid-active-breakpoint"><strong>Active Breakpoint:</strong> <span></span></div>' +
       '<div class="devgrid-controls">' +
-        '<div>' +
-          '<div><input class="devgrid-control devgrid-control devgrid-control-x-grid" type="checkbox" ' + (this.options.vertical ? 'checked' : '') + ' ><strong> X Grid</strong></div>' +
-          '<div><input class="devgrid-control devgrid-control-y-grid" type="checkbox" ' + (this.options.horizontal ? 'checked' : '') + ' ><strong> Y Grid</strong></div>' +
-          toggle_gutter +
-          '<div><input class="devgrid-control devgrid-control-distribute-gutter" type="checkbox" ' + (this.options.distributeGutter ? 'checked' : '') + ' ><strong> Distribute Gutter</strong></div>' +
-          bp_visu +
-        '</div>' +
+      '<div>' +
+      '<div><input class="devgrid-control devgrid-control devgrid-control-x-grid" type="checkbox" ' + (this.options.vertical ? 'checked' : '') + ' ><strong> X Grid</strong></div>' +
+      '<div><input class="devgrid-control devgrid-control-y-grid" type="checkbox" ' + (this.options.horizontal ? 'checked' : '') + ' ><strong> Y Grid</strong></div>' +
+      toggle_gutter +
+      '<div><input class="devgrid-control devgrid-control-distribute-gutter" type="checkbox" ' + (this.options.distributeGutter ? 'checked' : '') + ' ><strong> Distribute Gutter</strong></div>' +
+      bp_visu +
+      '</div>' +
       '</div>'
     );
 
@@ -512,7 +524,7 @@
 
       // Append vertical ghost grid for breakpoint tracking
       var vert_ghostgrid = vert_devgrid.clone();
-      vert_ghostgrid.attr('id', 'devgrid-ghostgrid-vert').css({left: -99999, display: 'block', 'z-index': -99999});
+      vert_ghostgrid.attr('id', 'devgrid-ghostgrid-vert').css({left: -99999, display: 'block', 'z-index': 99999});
       plugin.elm.append(vert_ghostgrid);
 
       // Append horizontal ghost grid for breakpoint tracking
@@ -534,6 +546,15 @@
         row_total_str           = column_total_str,
         window_width_str        = $(window).outerWidth() + 'px',
         window_height_str       = $(window).outerHeight() + 'px',
+        viewport_width          = function() {
+          var e = window, a = 'inner';
+          if (!('innerWidth' in window )) {
+            a = 'client';
+            e = document.documentElement || document.body;
+          }
+          return { width : e[ a+'Width' ] , height : e[ a+'Height' ] };
+        }().width,
+        viewport_width_str      = viewport_width + 'px',
         gutter_width            = parseFloat(plugin.options.gutterWidth.match(/\d+([\/.]\d+)?/g)[0]),
         gutter_width_str        = plugin.options.gutterWidth,
         column_width            = parseFloat(plugin.options.columnWidth.match(/\d+([\/.]\d+)?/g)[0]),
@@ -551,6 +572,7 @@
         row_total_elm           = info_box.find('.devgrid-row-total span'),
         window_width_elm        = info_box.find('.devgrid-window-width span'),
         window_height_elm       = info_box.find('.devgrid-window-height span'),
+        viewport_width_elm      = info_box.find('.devgrid-viewport-width span'),
         column_width_elm        = info_box.find('.devgrid-column-width span'),
         gutter_width_elm        = info_box.find('.devgrid-gutter-width span'),
         grid_width_elm          = info_box.find('.devgrid-grid-width span'),
@@ -562,6 +584,7 @@
       row_total_elm.html(row_total_str);
       window_width_elm.html(window_width_str);
       window_height_elm.html(window_height_str);
+      viewport_width_elm.html(viewport_width_str);
       column_width_elm.html(column_width_str);
       gutter_width_elm.html(gutter_width_str);
       grid_width_elm.html(grid_width_str);
