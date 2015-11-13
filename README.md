@@ -7,6 +7,8 @@ Version 1.2.0
 jQuery.devgrid serves two purposes. It is useful for the visualization of responsive site grids while providing the 
 means for tracking which breakpoints are active in your frontend code.
 
+Simply plugin the dimensions of your site's grid system into and visualize an overla
+
 #### DevGrid Visualization
 
 ![DevGrid Visualization](https://raw.githubusercontent.com/Xaxis/jquery.devgrid/master/test/jquery_devgrid_visualization_demo_2.gif)
@@ -119,6 +121,21 @@ $('body').devgrid({
 });
 ```
 
+### Percentage Based Gutters
+
+Want to use percentage based gutters on your fluid site? No problem. 
+
+```javascript
+// Distributed Gutter
+$('body').devgrid({
+    columns: 16,
+    columnWidth: '40px',
+    gutterWidth: '1.6%',
+    visible: true,
+    track: true
+});
+```
+
 ### Display Major Breakpoints Visualization
 
 It's often handy to visualize your major breakpoints such as mobile, tablet, etc. 
@@ -196,10 +213,6 @@ $('body').devgrid({
 });
 ```
 
-The result:
-
-![DevGrid Visualization Styles](https://raw.githubusercontent.com/Xaxis/jquery.devgrid/master/test/jquery_devgrid_style_demo_2.png)
-
 ### Using DevGrid Methods
 
 During development it is sometimes useful to have the ability to easily hide and show the DevGrid visualization via
@@ -249,6 +262,10 @@ Works in IE9+, Chrome 14+, Safari 4+, Firefox 3.0+, Opera 10+.
 See `test.html` in tests directory.
 
 ### Changelog
+
+#### Version 1.3.0
+
+* added support for percentage based gutters
 
 #### Version 1.2.0
 

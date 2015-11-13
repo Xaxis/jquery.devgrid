@@ -273,6 +273,13 @@
       $(window).on('resize', this.trackBreakPoint);
     }
 
+    // Rebuild media queries on screen resize for percentage gutters
+    if (this.options.gutterWidth.match(/\%/)) {
+      $(window).on('resize', function() {
+        plugin.createMediaQueries.call(plugin);
+      });
+    }
+
     // Inclosure a window resize event to update info fields
     var updateInfoFields = function() {
 
@@ -393,9 +400,7 @@
       column_width            = parseFloat(this.options.columnWidth.match(/\d+([\/.]\d+)?/g)[0]),
       column_width_total      = 0,
       column_break_point      = 0,
-      column_indicator_bp     = 0,
-      body_style              = document.body.currentStyle || window.getComputedStyle(document.body, ""),
-      scroll_active           = body_style['overflow-y'] == 'hidden' ? false : true;
+      column_indicator_bp     = 0;
 
     // Remove any previously created media queries
     $('.devgrid-styles').remove();
@@ -403,12 +408,14 @@
     // Determine the scroll bar width
     // @todo - When there is no scroll bar media queries fire out of line of the actual viewport width by the
     // missing scrollbar width. Determine how to account for this
-    if (scroll_active) {
-      var scroll_parent = $('<div style="width:50px; height:50px; overflow:auto"><div/></div>').appendTo('body');
-      var scroll_child = scroll_parent.children();
-      var scroll_width = scroll_child.innerWidth() - scroll_child.height(99).innerWidth();
-      scroll_parent.remove();
-    }
+    //var body_style              = document.body.currentStyle || window.getComputedStyle(document.body, ""),
+    //    scroll_active           = body_style['overflow-y'] == 'hidden' ? false : true;
+    //if (scroll_active) {
+    //  var scroll_parent = $('<div style="width:50px; height:50px; overflow:auto"><div/></div>').appendTo('body');
+    //  var scroll_child = scroll_parent.children();
+    //  var scroll_width = scroll_child.innerWidth() - scroll_child.height(99).innerWidth();
+    //  scroll_parent.remove();
+    //}
 
     // Create media query grid
     for (var i = 1; i <= this.options.columns; i++) {
@@ -473,14 +480,6 @@
     }
 
     return this.vert_breakpoint;
-  };
-
-  /**
-   * Determine if browser supports the CSS calc() function.
-   */
-  Plugin.prototype.cssCalcCompat = function() {
-    var div = $('<div style="width: 1px; width: calc(1px + 1px);">');
-    return div.outerWidth() == 2;
   };
 
 
