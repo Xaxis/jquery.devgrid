@@ -400,7 +400,6 @@
     $('.devgrid-styles').remove();
 
     // Determine the scroll bar width
-    // @todo - Support viewport scrollbar discrepency
     var body_style              = document.body.currentStyle || window.getComputedStyle(document.body, ""),
         scroll_active           = body_style['overflow-y'] == 'hidden' ? false : true;
     if (scroll_active) {
@@ -409,8 +408,6 @@
       scroll_width        = scroll_child.innerWidth() - scroll_child.height(99).innerWidth();
       scroll_parent.remove();
     }
-
-    console.log(scroll_width);
 
     // Create media query grid
     for (var i = 1; i <= this.options.columns; i++) {
@@ -444,9 +441,7 @@
       styles[0].textContent +=
         '@media only screen and (max-width: ' + (column_break_point + scroll_width) + 'px) {\n' +
         ' .devgrid .devgrid-col' + i + ', .devgrid .devgrid-gutter' + i + ' {\n' +
-        '   z-index: -999;\n' +
-        '   opacity: 0;\n' +
-        '   transition: opacity 1s ease;\n' +
+        '   display: none;\n' +
         ' }\n' +
         '}\n';
     }
@@ -463,7 +458,7 @@
 
     // Identify columns in ghost grid
     var ghost_cols = $('#devgrid-ghostgrid-vert').find('.devgrid-col').filter(function(idx, elm) {
-      return ($(elm).css('z-index') != '-999');
+      return ($(elm).css('display') != 'none');
     });
 
 
