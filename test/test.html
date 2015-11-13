@@ -39,9 +39,7 @@
         columnWidth: '40px',
         gutterWidth: '20px',
         visible: true,
-        track: true,
-        vertical: false,
-        horizontal: true
+        track: true
     });
     */
 
@@ -53,8 +51,6 @@
         gutterWidth: '20px',
         visible: true,
         track: true,
-        vertical: true,
-        horizontal: false,
         gridStyle: {
             'max-width': '1440px'
         }
@@ -74,15 +70,13 @@
     */
 
     // Draw breakpoints
-    /**/
+    /*
     $('body').devgrid({
         columns: 24,
         columnWidth: '40px',
         gutterWidth: '20px',
         visible: true,
         track: true,
-        vertical: true,
-        horizontal: false,
         gridStyle: {
             'max-width': '1440px'
         },
@@ -117,7 +111,7 @@
             }
         ]
     });
-    /**/
+    */
 
     // Distributed Gutter
     /*
@@ -130,6 +124,18 @@
         distributeGutter: true
     });
     */
+
+    // Percentage Based Gutter
+
+     $('body').devgrid({
+         columns: 10,
+         columnWidth: '80px',
+         gutterWidth: '20px',
+         visible: true,
+         track: true
+     });
+
+
 </script>
 
 </body>

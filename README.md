@@ -1,6 +1,6 @@
 # jQuery DevGrid
 
-Version 1.0.0
+Version 1.2.0
 
 ## Summary
 
@@ -38,8 +38,8 @@ $('body').devgrid({
 ### Tracking w/o DevGrid Visualization
 
 When you have no need to see your site's breakpoint visualizations but still would like to have the `<body>` element of 
-your site updated with the `data-devgrid-x-breakpoint` and `data-devgrid-y-breakpoint` attributes so you can track which 
-breakpoints are active programmatically, do the following:
+your site updated with the `data-devgrid-x-breakpoint` attribute so you can track which breakpoint is active 
+programmatically, do the following:
 
 ```javascript
 // jQuery.devgrid initialization  w/o visualization 
@@ -52,8 +52,8 @@ $('body').devgrid({
 ```
 
 This can be useful in cases where you're using code which should respond at different breakpoints. Tracking the value of 
-the `data-devgrid-x-breakpoint` and `data-devgrid-y-breakpoint` attributes with an observer or during a window resize 
-event can provide just the feedback you need to fire your code when you need to.
+the `data-devgrid-x-breakpoint` attribute can provide just the feedback you need to fire your code when you need to to 
+match your media queries.
 
 ### DevGrid Visualization w/o Tracking
 
@@ -70,42 +70,6 @@ $('body').devgrid({
 });
 ```
 
-### Initialize DevGrid Visualization w/ Horizontal (rows) Grid
-
-It is sometimes useful to track vertical changes in your responsive design as well. Enabling the horizontal grid gives
-you the ability to track and visualize vertical screen space. Vertical tracking is accomplished by monitoring the 
-`data-devgrid-y-breakpoint` attribute on the `<body>` element.
-
-```javascript
-// jQuery.devgrid initialization w/ horizontal grid
-$('body').devgrid({
-    columns: 12,
-    columnWidth: '40px',
-    gutterWidth: '20px',
-    visible: true,
-    vertical: false,
-    horizontal: true
-});
-```
-
-### Initialize DevGrid Visualization w/ Info Box Only
-
-```javascript
-// jQuery.devgrid initialization with only info box
-$('body').devgrid({
-    columns: 12,
-    columnWidth: '40px',
-    gutterWidth: '20px',
-    visible: true,
-    vertical: false,
-    horizontal: false
-});
-```
-
-You can also toggle which grid visualizations are showing using the UI toggle controls.
-
-![DevGrid Breakpoint Tracking](https://raw.githubusercontent.com/Xaxis/jquery.devgrid/master/test/jquery_devgrid_toggle_demo.gif)
-
 ### Centered DevGrid Visualization
 
 Centering the overlay on screen is as simple as applying a `max-width` to the `gridStyle` properties object.
@@ -116,9 +80,7 @@ $('body').devgrid({
     columns: 12,
     columnWidth: '40px',
     gutterWidth: '20px',
-    visible: true,
-    vertical: false,
-    horizontal: false,
+    visible: true
     gridStyle: {
         'max-width': '960px'
     }
@@ -143,7 +105,7 @@ $('body').devgrid({
 
 ### Distribute Column Gutters
 
-Many gutter systems have half of the gutter space on each side of the columns.
+Some gutter systems have half of the gutter space on each side of the columns.
 
 ```javascript
 // Distributed Gutter
@@ -287,6 +249,11 @@ Works in IE9+, Chrome 14+, Safari 4+, Firefox 3.0+, Opera 10+.
 See `test.html` in tests directory.
 
 ### Changelog
+
+#### Version 1.2.0
+
+* removed horizontal grid visualization and tracking
+* increased efficiency 
 
 #### Version 1.1.0
 

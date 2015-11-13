@@ -15,7 +15,6 @@
       visible: false,
       track: true,
       vertical: true,
-      horizontal: false,
       toggleGutter: false,
       breakpoints: [],
       distributeGutter: false,
@@ -41,7 +40,7 @@
         'box-sizing': 'border-box'
       },
       gutterStyle: {
-        position: 'absolute',
+        float: 'left',
         height: '100%',
         'box-sizing': 'border-box',
         background: 'rgba(255, 255, 0, 0.4)'
@@ -85,79 +84,33 @@
    */
   Plugin.prototype.init = function( element, options ) {
     var
-      plugin            = this,
-      vert_devgrid      = $('<div class="devgrid devgrid-vert">'),
-      horz_devgrid      = $('<div class="devgrid devgrid-horz">'),
-      overlay_devgrid   = $('<div class="devgrid devgrid-overlay">'),
-      styles            = $('<style class="devgrid-styles">'),
-      body_style        = document.body.currentStyle || window.getComputedStyle(document.body, ""),
-      scroll_active     = body_style['overflow-y'] == 'hidden' ? false : true,
-      scroll_width      = 0;
+      plugin              = this,
+      vert_devgrid        = $('<div class="devgrid devgrid-vert">'),
+      overlay_devgrid     = $('<div class="devgrid devgrid-overlay">'),
+      gutter_width        = parseFloat(this.options.gutterWidth.match(/\d+([\/.]\d+)?/g)[0]),
+      gutter_width_unit   = this.options.gutterWidth.replace(/\d+([\/.]\d+)?/g, '');
 
-    // Determine the scroll bar width
-    if (scroll_active) {
-      var scroll_parent = $('<div style="width:50px; height:50px; overflow:auto"><div/></div>').appendTo('body');
-      var scroll_child = scroll_parent.children();
-      scroll_width = scroll_child.innerWidth() - scroll_child.height(99).innerWidth();
-      scroll_parent.remove();
+    // Modify gutter width if distributed
+    if (this.options.distributeGutter) {
+      gutter_width = gutter_width / 2;
     }
 
-    // Remove previous devgrids and media query style elements
+    // Remove any previous devgrids
     $('.devgrid').remove();
-    $('.devgrid-styles').remove();
 
     // Apply dev grid container styles
     vert_devgrid.css($.extend(this._defaults.gridStyle, this.options.gridStyle));
-    horz_devgrid.css($.extend(this._defaults.gridStyle, this.options.gridStyle));
     overlay_devgrid.css($.extend(this._defaults.gridStyle, this.options.gridStyle));
 
-    // Create grid
+    // Construct media queries
+    this.createMediaQueries();
+
+    // Create visual grid
     for (var i = 1; i <= this.options.columns; i++) {
-
-      // Parse gutter/column dimensions
-      var
-        gutter_width            = parseFloat(this.options.gutterWidth.match(/\d+([\/.]\d+)?/g)[0]),
-        gutter_width_unit       = this.options.gutterWidth.replace(/\d+([\/.]\d+)?/g, ''),
-        column_width            = parseFloat(this.options.columnWidth.match(/\d+([\/.]\d+)?/g)[0]),
-        column_width_total      = column_width + gutter_width,
-        column_width_unit       = this.options.columnWidth.replace(/\d+([\/.]\d+)?/g, ''),
-        column_break_point      = parseFloat(column_width_total * i),
-        indicator_break_point   = column_break_point + column_width;
-
-      // Modify gutter width if distributed
-      if (this.options.distributeGutter) {
-        gutter_width = gutter_width / 2;
-      }
-
-      // Handle some errors
-      if (gutter_width_unit != column_width_unit) {
-        throw new Error('jQuery.' + plugin_name + ' :: ' + ' columnWidth and gutterWidth unit type must be the same! Currently ' + gutter_width_unit + ' vs ' + column_width_unit);
-      }
 
       /*
        * CREATE - Grid columns
        */
-
-      // Construct vertical column breakpoint indicator media query
-      styles[0].textContent +=
-        '@media only screen and (max-width: ' + (indicator_break_point) + column_width_unit + ') {\n' +
-        ' .devgrid .devgrid-col' + i + ' {\n' +
-        '   background: rgba(0, 255, 0, 0.3) !important;\n' +
-        '   opacity: .5;\n' +
-        '   transition: opacity 0.6s ease;\n' +
-        ' }\n' +
-        ' .devgrid .devgrid-col' + i + ' .devgrid-gutter {\n' +
-        '   background: rgba(0, 255, 255, 0.2) !important;\n' +
-        ' }\n' +
-        '}\n';
-
-      // Construct vertical column breakpoint media query
-      styles[0].textContent +=
-        '@media only screen and (max-width: ' + (column_break_point) + column_width_unit + ') {\n' +
-        ' .devgrid .devgrid-col' + i + ' {\n' +
-        '   display: none;\n' +
-        ' }\n' +
-        '}\n';
 
       // Create number box
       var vert_number_box = $('<div class="devgrid-number-box">' + i + '</div>');
@@ -167,21 +120,13 @@
 
       // Create column/gutter
       var column = $('<div class="devgrid-col devgrid-col' + i + '"></div>');
-      var l_gutter = $('<div class="devgrid-gutter devgrid-l-gutter">');
+      var l_gutter = $('<div class="devgrid-gutter devgrid-l-gutter devgrid-gutter' + i + '">');
 
       // For distributed gutters create two gutters per column
       var r_gutter = (this.options.distributeGutter) ? $('<div class="devgrid-gutter devgrid-r-gutter">') : null;
 
       // Append number box to column
       column.append(vert_number_box);
-
-      // Append gutter to column
-      column.append(l_gutter);
-
-      // Append secondary gutter to column when distributed gutters
-      if (this.options.distributeGutter) {
-        column.append(r_gutter);
-      }
 
       // Apply base styles to column and gutter
       column
@@ -196,228 +141,28 @@
           width: gutter_width + gutter_width_unit
         });
 
-      // Gutters on the left of columns
-      if (this.options.toggleGutter) {
-
-        // Distributed gutters
-        if (this.options.distributeGutter) {
-          column
-            .css({
-              'margin-left': gutter_width + gutter_width_unit,
-              'margin-right': gutter_width + gutter_width_unit
-            });
-          l_gutter
-            .css({
-              right: (-gutter_width) + gutter_width_unit
-            });
-          r_gutter
-            .css({
-              left: (-gutter_width) + gutter_width_unit
-            });
-        }
-
-        // Non-distributed gutters
-        else {
-          column
-            .css({
-              'margin-left': this.options.gutterWidth
-            });
-          l_gutter
-            .css({
-              left: (-gutter_width) + gutter_width_unit
-            });
-        }
-      }
-
-      // Gutters on right of columns
-      else {
-
-        // Distributed gutters
-        if (this.options.distributeGutter) {
-          column
-            .css({
-              'margin-left': gutter_width + gutter_width_unit,
-              'margin-right': gutter_width + gutter_width_unit
-            });
-          l_gutter
-            .css({
-              right: (-gutter_width) + gutter_width_unit
-            });
-          r_gutter
-            .css({
-              left: (-gutter_width) + gutter_width_unit
-            });
-        }
-
-        // Non-distributed gutters
-        else {
-          column
-            .css({
-              'margin-right': this.options.gutterWidth
-            });
-          l_gutter
-            .css({
-              right: (-gutter_width) + gutter_width_unit
-            });
-        }
-      }
-
-      // Add column/gutter to grid
-      vert_devgrid.append(column);
-
-      /*
-       * CREATE - Grid rows
-       */
-
-      // Construct horizontal row breakpoint indicator media query
-      styles[0].textContent +=
-        '@media only screen and (max-height: ' + indicator_break_point + column_width_unit + ') {\n' +
-        ' .devgrid .devgrid-row' + i + ' {\n' +
-        '   background: rgba(0, 255, 0, 0.3) !important;\n' +
-        '   opacity: .5;\n' +
-        '   transition: opacity 0.6s ease;\n' +
-        ' }\n' +
-        ' .devgrid .devgrid-row' + i + ' .devgrid-gutter {\n' +
-        '   background: rgba(0, 255, 255, 0.2) !important;\n' +
-        ' }\n' +
-        '}\n';
-
-      // Construct horizontal row breakpoint media query
-      styles[0].textContent +=
-        '@media only screen and (max-height: ' + (column_break_point) + column_width_unit + ') {\n' +
-        ' .devgrid .devgrid-row' + i + ' {\n' +
-        '   display: none;\n' +
-        ' }\n' +
-        '}\n';
-
-      // Create number box
-      var horz_number_box = $('<div class="devgrid-number-box">' + i + '</div>');
-
-      // Apply number box styles
-      horz_number_box
-        .css($.extend(this._defaults.numBoxStyle, this.options.numBoxStyle))
-        .css({
-          width: 'auto',
-          'min-width': '20px',
-          height: '100%',
-          padding: '0 4px',
-          'line-height': this.options.columnWidth
-        });
-
-      // Create row/gutter
-      var row = $('<div class="devgrid-row devgrid-row' + i + '"></div>');
-      var t_gutter = $('<div class="devgrid-gutter devgrid-t-gutter">');
-
-      // For distributed gutters create two gutters per row
-      var b_gutter = (this.options.distributeGutter) ? $('<div class="devgrid-gutter devgrid-b-gutter">') : null;
-
-      // Add row to grid
-      horz_devgrid.append(row);
-
-      // Append gutters to columns
-      row.append(t_gutter);
-
-      // Append secondary gutter to column when distributed gutters
+      // Distributed gutters
       if (this.options.distributeGutter) {
-        row.append(b_gutter);
+        vert_devgrid.append(l_gutter);
+        vert_devgrid.append(column);
+        vert_devgrid.append(r_gutter);
       }
 
-      // Apply base styles to row and gutter
-      row
-        .css($.extend(this._defaults.columnStyle, this.options.columnStyle))
-        .css({
-          width: '100%',
-          'margin-left': 0,
-          float: 'none',
-          height: this.options.columnWidth
-        });
-      t_gutter
-        .add(b_gutter)
-        .css($.extend(this._defaults.gutterStyle, this.options.gutterStyle))
-        .css({
-          width: '100%',
-          height: gutter_width + gutter_width_unit
-        });
-
-      // Gutters above row
-      if (this.options.toggleGutter) {
-
-        // Distributed gutters
-        if (this.options.distributeGutter) {
-          row
-            .css({
-              'margin-top': (gutter_width) + gutter_width_unit,
-              'margin-bottom': (gutter_width * 2) + gutter_width_unit
-            });
-          t_gutter
-            .css({
-              top: (-gutter_width)
-            });
-          b_gutter
-            .css({
-              bottom: (-gutter_width)
-            });
-        }
-
-        // Non-distributed gutters
-        else {
-          row
-            .css({
-              'margin-top': this.options.gutterWidth
-            });
-          t_gutter
-            .css({
-              top: (-gutter_width)
-            });
-        }
-      }
-
-      // Gutters below row
+      // Only toggle gutters when not distributed
       else {
-
-        // Distributed gutters
-        if (this.options.distributeGutter) {
-          row
-            .css({
-              'margin-top': (gutter_width) + gutter_width_unit,
-              'margin-bottom': (gutter_width * 2) + gutter_width_unit
-            });
-          t_gutter
-            .css({
-              top: (-gutter_width)
-            });
-          b_gutter
-            .css({
-              bottom: (-gutter_width)
-            });
+        if (this.options.toggleGutter) {
+          vert_devgrid.append(l_gutter);
+          vert_devgrid.append(column);
         }
-
-        // Non-distributed gutters
         else {
-          row
-            .css({
-              'margin-bottom': this.options.gutterWidth
-            });
-          t_gutter
-            .css({
-              bottom: (-gutter_width) + gutter_width_unit
-            });
+          vert_devgrid.append(column);
+          vert_devgrid.append(l_gutter);
         }
       }
-
-      // Apply row styles
-      var n = (i-1);
-
-      // Append number box to column
-      row.append(horz_number_box);
     }
-
-    // Append media queries
-    $('head').append(styles);
 
     // Append the devgrids
     plugin.elm.append(vert_devgrid);
-    plugin.elm.append(horz_devgrid);
     plugin.elm.append(overlay_devgrid);
 
     /*
@@ -493,19 +238,15 @@
     // Add elements to info box
     info_box.append(
       '<div class="devgrid-info-row devgrid-column-total"><strong>Breakpoints X:</strong> <span></span></div>' +
-      '<div class="devgrid-info-row devgrid-row-total"><strong>Breakpoints Y:</strong> <span></span></div>' +
-      '<div class="devgrid-info-row devgrid-window-height"><strong>Window H:</strong> <span></span></div>' +
       '<div class="devgrid-info-row devgrid-window-width"><strong>Window W:</strong> <span></span></div>' +
       '<div class="devgrid-info-row devgrid-viewport-width"><strong>Viewport W:</strong> <span></span></div>' +
       '<div class="devgrid-info-row devgrid-gutter-width"><strong>Gutter Size:</strong> <span></span></div>' +
       '<div class="devgrid-info-row devgrid-column-width"><strong>Unit Size:</strong> <span></span></div>' +
       '<div class="devgrid-info-row devgrid-grid-column-width"><strong>Unit Total Size:</strong> <span></span></div>' +
-      '<div class="devgrid-info-row devgrid-grid-width"><strong>Grid Size:</strong> <span></span></div>' +
       '<div class="devgrid-info-row devgrid-active-breakpoint"><strong>Active Breakpoint:</strong> <span></span></div>' +
       '<div class="devgrid-controls">' +
       '<div>' +
       '<div><input class="devgrid-control devgrid-control devgrid-control-x-grid" type="checkbox" ' + (this.options.vertical ? 'checked' : '') + ' ><strong> X Grid</strong></div>' +
-      '<div><input class="devgrid-control devgrid-control-y-grid" type="checkbox" ' + (this.options.horizontal ? 'checked' : '') + ' ><strong> Y Grid</strong></div>' +
       toggle_gutter +
       '<div><input class="devgrid-control devgrid-control-distribute-gutter" type="checkbox" ' + (this.options.distributeGutter ? 'checked' : '') + ' ><strong> Distribute Gutter</strong></div>' +
       bp_visu +
@@ -527,11 +268,6 @@
       vert_ghostgrid.attr('id', 'devgrid-ghostgrid-vert').css({left: -99999, display: 'block', 'z-index': 99999});
       plugin.elm.append(vert_ghostgrid);
 
-      // Append horizontal ghost grid for breakpoint tracking
-      var horz_ghostgrid = horz_devgrid.clone();
-      horz_ghostgrid.attr('id', 'devgrid-ghostgrid-horz').css({left: -99999, display: 'block', 'z-index': -99999});
-      plugin.elm.append(horz_ghostgrid);
-
       // Start tracking and attach tracking event
       this.trackBreakPoint.call(this.trackBreakPoint);
       $(window).on('resize', this.trackBreakPoint);
@@ -545,7 +281,6 @@
         column_total_str        = plugin.options.columns,
         row_total_str           = column_total_str,
         window_width_str        = $(window).outerWidth() + 'px',
-        window_height_str       = $(window).outerHeight() + 'px',
         viewport_width          = function() {
           var e = window, a = 'inner';
           if (!('innerWidth' in window )) {
@@ -560,22 +295,18 @@
         column_width            = parseFloat(plugin.options.columnWidth.match(/\d+([\/.]\d+)?/g)[0]),
         column_width_unit       = plugin.options.columnWidth.replace(/\d+([\/.]\d+)?/g, ''),
         column_width_str        = plugin.options.columnWidth,
-        grid_size               = (gutter_width + column_width) * column_total_str + 'px',
-        grid_width_str          = grid_size + ' x ' + grid_size,
         grid_column_width_str   = gutter_width + column_width + column_width_unit,
-        active_breakpoints      = plugin.trackBreakPoint.call(plugin.trackBreakPoint),
-        active_breakpoint_str   = 'X: '+ active_breakpoints[0] + '  ' + 'Y: ' + active_breakpoints[1];
+        active_breakpoint       = plugin.trackBreakPoint.call(plugin.trackBreakPoint),
+        active_breakpoint_str   = active_breakpoint;
 
       // Reference info value elements
       var
         column_total_elm        = info_box.find('.devgrid-column-total span'),
         row_total_elm           = info_box.find('.devgrid-row-total span'),
         window_width_elm        = info_box.find('.devgrid-window-width span'),
-        window_height_elm       = info_box.find('.devgrid-window-height span'),
         viewport_width_elm      = info_box.find('.devgrid-viewport-width span'),
         column_width_elm        = info_box.find('.devgrid-column-width span'),
         gutter_width_elm        = info_box.find('.devgrid-gutter-width span'),
-        grid_width_elm          = info_box.find('.devgrid-grid-width span'),
         grid_column_width_elm   = info_box.find('.devgrid-grid-column-width span'),
         active_breakpoint_elm   = info_box.find('.devgrid-active-breakpoint span');
 
@@ -583,11 +314,9 @@
       column_total_elm.html(column_total_str);
       row_total_elm.html(row_total_str);
       window_width_elm.html(window_width_str);
-      window_height_elm.html(window_height_str);
       viewport_width_elm.html(viewport_width_str);
       column_width_elm.html(column_width_str);
       gutter_width_elm.html(gutter_width_str);
-      grid_width_elm.html(grid_width_str);
       grid_column_width_elm.html(grid_column_width_str);
       active_breakpoint_elm.html(active_breakpoint_str);
     };
@@ -596,12 +325,7 @@
 
     // Display visualization only when instructed
     if (this.options.visible) {
-      if (this.options.vertical) {
-        vert_devgrid.css('display', 'block');
-      }
-      if (this.options.horizontal) {
-        horz_devgrid.css('display', 'block');
-      }
+      vert_devgrid.css('display', 'block');
       overlay_devgrid.css('display', 'block');
     }
 
@@ -620,18 +344,6 @@
         } else {
           options.vertical = false;
           vert_devgrid.find('.devgrid-col, .devgrid-gutter').hide();
-        }
-      }
-
-      // Show/hide Y grid
-      else if (target.hasClass('devgrid-control-y-grid')) {
-        checked = $('.devgrid-control-y-grid:checked').length;
-        if (checked) {
-          options.horizontal = true;
-          horz_devgrid.show();
-        } else {
-          options.horizontal = false;
-          horz_devgrid.hide();
         }
       }
 
@@ -670,23 +382,88 @@
     $('.devgrid-control').on('click', handleDevgridToggleControls);
   };
 
+  /**
+   * Create media queries responsible for hiding visualization elements as well as tracking elements.
+   */
+  Plugin.prototype.createMediaQueries = function() {
+    var
+      styles                  = $('<style class="devgrid-styles">'),
+      window_w                = $(window).outerWidth(),
+      gutter_width            = parseFloat(this.options.gutterWidth.match(/\d+([\/.]\d+)?/g)[0]),
+      column_width            = parseFloat(this.options.columnWidth.match(/\d+([\/.]\d+)?/g)[0]),
+      column_width_total      = 0,
+      column_break_point      = 0,
+      column_indicator_bp     = 0,
+      body_style              = document.body.currentStyle || window.getComputedStyle(document.body, ""),
+      scroll_active           = body_style['overflow-y'] == 'hidden' ? false : true;
+
+    // Remove any previously created media queries
+    $('.devgrid-styles').remove();
+
+    // Determine the scroll bar width
+    // @todo - When there is no scroll bar media queries fire out of line of the actual viewport width by the
+    // missing scrollbar width. Determine how to account for this
+    if (scroll_active) {
+      var scroll_parent = $('<div style="width:50px; height:50px; overflow:auto"><div/></div>').appendTo('body');
+      var scroll_child = scroll_parent.children();
+      var scroll_width = scroll_child.innerWidth() - scroll_child.height(99).innerWidth();
+      scroll_parent.remove();
+    }
+
+    // Create media query grid
+    for (var i = 1; i <= this.options.columns; i++) {
+
+      // Calculate values differently based on unit (px vs. %)
+      if (!this.options.gutterWidth.match(/\%/)) {
+        column_width_total      = column_width + gutter_width;
+        column_break_point      = parseFloat(column_width_total * i);
+        column_indicator_bp     = column_break_point + column_width;
+      } else {
+        var perc_gutter_width   = (gutter_width / 100) * window_w;
+        column_width_total      = column_width + perc_gutter_width;
+        column_break_point      = parseFloat(column_width_total * i);
+        column_indicator_bp     = column_break_point + column_width;
+      }
+
+      // Construct vertical column breakpoint indicator media query
+      styles[0].textContent +=
+        '@media only screen and (max-width: ' + (column_indicator_bp) + 'px) {\n' +
+        ' .devgrid .devgrid-col' + i + ' {\n' +
+        '   background: rgba(0, 255, 0, 0.3) !important;\n' +
+        '   opacity: .5;\n' +
+        '   transition: opacity 0.6s ease;\n' +
+        ' }\n' +
+        ' .devgrid .devgrid-col' + i + ' + .devgrid-gutter {\n' +
+        '   background: rgba(0, 255, 255, 0.2) !important;\n' +
+        ' }\n' +
+        '}\n';
+
+      // Construct vertical column breakpoint media query
+      styles[0].textContent +=
+        '@media only screen and (max-width: ' + (column_break_point) + 'px) {\n' +
+        ' .devgrid .devgrid-col' + i + ', .devgrid .devgrid-gutter' + i + ' {\n' +
+        '   z-index: -999;\n' +
+        '   opacity: 0;\n' +
+        '   transition: opacity 1s ease;\n' +
+        ' }\n' +
+        '}\n';
+    }
+
+    // Attach media queries
+    $('head').append(styles);
+  };
 
   /**
-   * Method used to update which breakpoints are currently active as the data attributes 'data-devgrid-x-breakpoint' and
-   * 'data-devgrid-y-breakpoint' on the body.
-   * @returns {Number} An array containing two numbers (the X and Y next breakpoints for columns and rows)
+   * Method used to update which breakpoints are currently active as the data attribute 'data-devgrid-x-breakpoint'
+   * @returns {Number} The number of the next breakpoint.
    */
   Plugin.prototype.trackBreakPoint = function() {
 
     // Identify columns in ghost grid
     var ghost_cols = $('#devgrid-ghostgrid-vert').find('.devgrid-col').filter(function(idx, elm) {
-      return ($(elm).css('display') != 'none');
+      return ($(elm).css('z-index') != '-999');
     });
 
-    // Identify rows in ghost grid
-    var ghost_rows = $('#devgrid-ghostgrid-horz').find('.devgrid-row').filter(function(idx, elm) {
-      return ($(elm).css('display') != 'none');
-    });
 
     // Identify and set column breakpoint on body
     var vert_breakpoint = ghost_cols.length;
@@ -695,14 +472,15 @@
       $('body').attr('data-devgrid-x-breakpoint', this.vert_breakpoint);
     }
 
-    // Identify and set row breakpoint on body
-    var horz_breakpoint = ghost_rows.length;
-    if (this.horz_breakpoint != horz_breakpoint) {
-      this.horz_breakpoint = horz_breakpoint;
-      $('body').attr('data-devgrid-y-breakpoint', this.horz_breakpoint);
-    }
+    return this.vert_breakpoint;
+  };
 
-    return [this.vert_breakpoint, this.horz_breakpoint];
+  /**
+   * Determine if browser supports the CSS calc() function.
+   */
+  Plugin.prototype.cssCalcCompat = function() {
+    var div = $('<div style="width: 1px; width: calc(1px + 1px);">');
+    return div.outerWidth() == 2;
   };
 
 
