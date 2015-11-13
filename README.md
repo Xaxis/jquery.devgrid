@@ -1,6 +1,6 @@
 # jQuery DevGrid
 
-Version 1.2.0
+Version 1.3.0
 
 ## Summary
 
@@ -255,7 +255,7 @@ $.fn.devgrid('hide');
 
 Tested with jQuery 1.7.x+.
 
-Works in IE9+, Chrome 14+, Safari 4+, Firefox 3.0+, Opera 10+.
+Works in browsers that support CSS calc() functionality.
 
 ## Working Example
 
