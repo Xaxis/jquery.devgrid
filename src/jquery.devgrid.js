@@ -237,16 +237,15 @@
 
     // Add elements to info box
     info_box.append(
-      '<div class="devgrid-info-row devgrid-column-total"><strong>Breakpoints X:</strong> <span></span></div>' +
+      '<div class="devgrid-info-row devgrid-column-total"><strong>Breakpoints:</strong> <span></span></div>' +
       '<div class="devgrid-info-row devgrid-window-width"><strong>Window W:</strong> <span></span></div>' +
       '<div class="devgrid-info-row devgrid-viewport-width"><strong>Viewport W:</strong> <span></span></div>' +
       '<div class="devgrid-info-row devgrid-gutter-width"><strong>Gutter Size:</strong> <span></span></div>' +
       '<div class="devgrid-info-row devgrid-column-width"><strong>Unit Size:</strong> <span></span></div>' +
-      '<div class="devgrid-info-row devgrid-grid-column-width"><strong>Unit Total Size:</strong> <span></span></div>' +
       '<div class="devgrid-info-row devgrid-active-breakpoint"><strong>Active Breakpoint:</strong> <span></span></div>' +
       '<div class="devgrid-controls">' +
       '<div>' +
-      '<div><input class="devgrid-control devgrid-control devgrid-control-x-grid" type="checkbox" ' + (this.options.vertical ? 'checked' : '') + ' ><strong> X Grid</strong></div>' +
+      '<div><input class="devgrid-control devgrid-control devgrid-control-x-grid" type="checkbox" ' + (this.options.vertical ? 'checked' : '') + ' ><strong> Grid</strong></div>' +
       toggle_gutter +
       '<div><input class="devgrid-control devgrid-control-distribute-gutter" type="checkbox" ' + (this.options.distributeGutter ? 'checked' : '') + ' ><strong> Distribute Gutter</strong></div>' +
       bp_visu +
@@ -297,12 +296,8 @@
           return { width : e[ a+'Width' ] , height : e[ a+'Height' ] };
         }().width,
         viewport_width_str      = viewport_width + 'px',
-        gutter_width            = parseFloat(plugin.options.gutterWidth.match(/\d+([\/.]\d+)?/g)[0]),
         gutter_width_str        = plugin.options.gutterWidth,
-        column_width            = parseFloat(plugin.options.columnWidth.match(/\d+([\/.]\d+)?/g)[0]),
-        column_width_unit       = plugin.options.columnWidth.replace(/\d+([\/.]\d+)?/g, ''),
         column_width_str        = plugin.options.columnWidth,
-        grid_column_width_str   = gutter_width + column_width + column_width_unit,
         active_breakpoint       = plugin.trackBreakPoint.call(plugin.trackBreakPoint),
         active_breakpoint_str   = active_breakpoint;
 
@@ -314,7 +309,6 @@
         viewport_width_elm      = info_box.find('.devgrid-viewport-width span'),
         column_width_elm        = info_box.find('.devgrid-column-width span'),
         gutter_width_elm        = info_box.find('.devgrid-gutter-width span'),
-        grid_column_width_elm   = info_box.find('.devgrid-grid-column-width span'),
         active_breakpoint_elm   = info_box.find('.devgrid-active-breakpoint span');
 
       // Populate elements with values
@@ -324,7 +318,6 @@
       viewport_width_elm.html(viewport_width_str);
       column_width_elm.html(column_width_str);
       gutter_width_elm.html(gutter_width_str);
-      grid_column_width_elm.html(grid_column_width_str);
       active_breakpoint_elm.html(active_breakpoint_str);
     };
     updateInfoFields();
@@ -400,22 +393,24 @@
       column_width            = parseFloat(this.options.columnWidth.match(/\d+([\/.]\d+)?/g)[0]),
       column_width_total      = 0,
       column_break_point      = 0,
-      column_indicator_bp     = 0;
+      column_indicator_bp     = 0,
+      scroll_width            = 0;
 
     // Remove any previously created media queries
     $('.devgrid-styles').remove();
 
     // Determine the scroll bar width
-    // @todo - When there is no scroll bar media queries fire out of line of the actual viewport width by the
-    // missing scrollbar width. Determine how to account for this
-    //var body_style              = document.body.currentStyle || window.getComputedStyle(document.body, ""),
-    //    scroll_active           = body_style['overflow-y'] == 'hidden' ? false : true;
-    //if (scroll_active) {
-    //  var scroll_parent = $('<div style="width:50px; height:50px; overflow:auto"><div/></div>').appendTo('body');
-    //  var scroll_child = scroll_parent.children();
-    //  var scroll_width = scroll_child.innerWidth() - scroll_child.height(99).innerWidth();
-    //  scroll_parent.remove();
-    //}
+    // @todo - Support viewport scrollbar discrepency
+    var body_style              = document.body.currentStyle || window.getComputedStyle(document.body, ""),
+        scroll_active           = body_style['overflow-y'] == 'hidden' ? false : true;
+    if (scroll_active) {
+      var scroll_parent   = $('<div style="width:50px; height:50px; overflow:auto"><div/></div>').appendTo('body');
+      var scroll_child    = scroll_parent.children();
+      scroll_width        = scroll_child.innerWidth() - scroll_child.height(99).innerWidth();
+      scroll_parent.remove();
+    }
+
+    console.log(scroll_width);
 
     // Create media query grid
     for (var i = 1; i <= this.options.columns; i++) {
@@ -434,7 +429,7 @@
 
       // Construct vertical column breakpoint indicator media query
       styles[0].textContent +=
-        '@media only screen and (max-width: ' + (column_indicator_bp) + 'px) {\n' +
+        '@media only screen and (max-width: ' + (column_indicator_bp + scroll_width) + 'px) {\n' +
         ' .devgrid .devgrid-col' + i + ' {\n' +
         '   background: rgba(0, 255, 0, 0.3) !important;\n' +
         '   opacity: .5;\n' +
@@ -447,7 +442,7 @@
 
       // Construct vertical column breakpoint media query
       styles[0].textContent +=
-        '@media only screen and (max-width: ' + (column_break_point) + 'px) {\n' +
+        '@media only screen and (max-width: ' + (column_break_point + scroll_width) + 'px) {\n' +
         ' .devgrid .devgrid-col' + i + ', .devgrid .devgrid-gutter' + i + ' {\n' +
         '   z-index: -999;\n' +
         '   opacity: 0;\n' +
