@@ -457,7 +457,7 @@
   };
 
   /**
-   * Method used to update which breakpoints are currently active as the data attribute 'data-devgrid-x-breakpoint'
+   * Method used to update which breakpoints are currently active as the data attribute 'data-devgrid-bp'
    * @returns {Number} The number of the next breakpoint.
    */
   Plugin.prototype.trackBreakPoint = function() {
@@ -472,7 +472,7 @@
     var vert_breakpoint = ghost_cols.length;
     if (this.vert_breakpoint != vert_breakpoint) {
       this.vert_breakpoint = vert_breakpoint;
-      $('body').attr('data-devgrid-x-breakpoint', this.vert_breakpoint);
+      $('body').attr('data-devgrid-bp', this.vert_breakpoint);
     }
 
     return this.vert_breakpoint;

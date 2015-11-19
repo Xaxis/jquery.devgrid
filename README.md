@@ -30,7 +30,7 @@ $('body').devgrid({
 ### Tracking w/o DevGrid Visualization
 
 When you have no need to see your site's breakpoint visualizations but still would like to have the `<body>` element of 
-your site updated with the `data-devgrid-x-breakpoint` attribute so you can track which breakpoint is active 
+your site updated with the `data-devgrid-bp` attribute so you can track which breakpoint is active 
 programmatically, do the following:
 
 ```javascript
@@ -44,7 +44,7 @@ $('body').devgrid({
 ```
 
 This can be useful in cases where you're using code which should respond at different breakpoints. Tracking the value of 
-the `data-devgrid-x-breakpoint` attribute can provide just the feedback you need to fire your code when you need to to 
+the `data-devgrid-bp` attribute can provide just the feedback you need to fire your code when you need to to 
 match your media queries.
 
 ### DevGrid Visualization w/o Tracking
