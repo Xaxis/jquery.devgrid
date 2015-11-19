@@ -399,11 +399,17 @@
     // Remove any previously created media queries
     $('.devgrid-styles').remove();
 
-    // Determine the scroll bar width
+    // Determine if vertical scroll bar is present
     var body_style              = document.body.currentStyle || window.getComputedStyle(document.body, ""),
-        scroll_active           = body_style['overflow-y'] == 'hidden' ? false : true;
+      has_v_scroll              = $(document).height() > $(window).height(),
+      scroll_active             = (has_v_scroll && body_style.overflow == 'visible') ||
+                                  (has_v_scroll && body_style.overflowY == 'visible') ||
+                                  (has_v_scroll && body_style.overflow == 'auto') ||
+                                  (has_v_scroll && body_style.overflowY == 'auto');
+
+    // Determine scroll bar width when present
     if (scroll_active) {
-      var scroll_parent   = $('<div style="width:50px; height:50px; overflow:auto"><div/></div>').appendTo('body');
+      var scroll_parent   = $('<div style="width:50px; height:50px; overflow:auto;"><div/></div>').appendTo('body');
       var scroll_child    = scroll_parent.children();
       scroll_width        = scroll_child.innerWidth() - scroll_child.height(99).innerWidth();
       scroll_parent.remove();

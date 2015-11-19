@@ -32,7 +32,7 @@ module.exports = function(grunt) {
      * Minify JavaScript
      */
     uglify: {
-      eye: {
+      devgrid: {
         options: {
           banner: '<%= tag.banner %>',
           mangle: true,
