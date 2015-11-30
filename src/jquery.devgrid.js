@@ -73,6 +73,7 @@
 
   // Plugin constructor
   function Plugin( element, options ) {
+    this.scrollbar_active = this.bodyHasScrollBar();
     this.elm = $(element);
     this.options = $.extend( {}, defaults, options);
     this._defaults = defaults;
@@ -104,6 +105,19 @@
 
     // Construct media queries
     this.createMediaQueries();
+
+
+    // Start scrollbar watcher. This allows for rebuilding of media queries when the vertical scrollbar toggles (goes
+    // from being visible/invisible and vica versa). Using an interval is the only fully cross browser compatible way
+    // to determine this state. The down side is browsers may experience a slight performance degradation.
+    // @todo - Continually research a better performing method to accomplish this task.
+    setInterval(function() {
+      var scrollbar_active = plugin.bodyHasScrollBar();
+      if (plugin.scrollbar_active != scrollbar_active) {
+        plugin.scrollbar_active = scrollbar_active;
+        plugin.createMediaQueries();
+      }
+    }, 100);
 
     // Create visual grid
     for (var i = 1; i <= this.options.columns; i++) {
@@ -394,18 +408,12 @@
       column_width_total      = 0,
       column_break_point      = 0,
       column_indicator_bp     = 0,
-      scroll_width            = 0;
+      scroll_width            = 0,
+      scroll_active           = this.bodyHasScrollBar(),
+      is_webkit               = this.isBrowserWebkit();
 
     // Remove any previously created media queries
     $('.devgrid-styles').remove();
-
-    // Determine if vertical scroll bar is present
-    var body_style              = document.body.currentStyle || window.getComputedStyle(document.body, ""),
-      has_v_scroll              = $(document).height() > $(window).height(),
-      scroll_active             = (has_v_scroll && body_style.overflow == 'visible') ||
-                                  (has_v_scroll && body_style.overflowY == 'visible') ||
-                                  (has_v_scroll && body_style.overflow == 'auto') ||
-                                  (has_v_scroll && body_style.overflowY == 'auto');
 
     // Determine scroll bar width when present
     if (scroll_active) {
@@ -430,26 +438,55 @@
         column_indicator_bp     = column_break_point + column_width;
       }
 
-      // Construct vertical column breakpoint indicator media query
-      styles[0].textContent +=
-        '@media only screen and (max-width: ' + (column_indicator_bp + scroll_width) + 'px) {\n' +
-        ' .devgrid .devgrid-col' + i + ' {\n' +
-        '   background: rgba(0, 255, 0, 0.3) !important;\n' +
-        '   opacity: .5;\n' +
-        '   transition: opacity 0.6s ease;\n' +
-        ' }\n' +
-        ' .devgrid .devgrid-col' + i + ' + .devgrid-gutter {\n' +
-        '   background: rgba(0, 255, 255, 0.2) !important;\n' +
-        ' }\n' +
-        '}\n';
+      // Currently there is no good JavaScript test to determine if a browsers media queries include or exclude
+      // scrollbar dimensions in their triggering calculation. As of this release, webkit based browsers are still
+      // excluding scrollbar dimensions and thus we adjust for this by not including the scroll width.
+      // @todo - Continually research a way to detect differences in browser media query calculations.
+      if (is_webkit) {
 
-      // Construct vertical column breakpoint media query
-      styles[0].textContent +=
-        '@media only screen and (max-width: ' + (column_break_point + scroll_width) + 'px) {\n' +
-        ' .devgrid .devgrid-col' + i + ', .devgrid .devgrid-gutter' + i + ' {\n' +
-        '   display: none;\n' +
-        ' }\n' +
-        '}\n';
+        // Browsers that EXCLUDE scrollbar dimensions
+        styles[0].textContent +=
+          '@media only screen and (max-width: ' + (column_indicator_bp) + 'px) {\n' +
+          ' .devgrid .devgrid-col' + i + ' {\n' +
+          '   background: rgba(0, 255, 0, 0.3) !important;\n' +
+          '   opacity: .5;\n' +
+          '   transition: opacity 0.6s ease;\n' +
+          ' }\n' +
+          ' .devgrid .devgrid-col' + i + ' + .devgrid-gutter {\n' +
+          '   background: rgba(0, 255, 255, 0.2) !important;\n' +
+          ' }\n' +
+          '}\n';
+
+        // Construct vertical column breakpoint media query
+        styles[0].textContent +=
+          '@media only screen and (max-width: ' + (column_break_point) + 'px) {\n' +
+          ' .devgrid .devgrid-col' + i + ', .devgrid .devgrid-gutter' + i + ' {\n' +
+          '   display: none;\n' +
+          ' }\n' +
+          '}\n';
+      } else {
+
+        // Browsers that INCLUDE scrollbar dimensions
+        styles[0].textContent +=
+          '@media only screen and (max-width: ' + (column_indicator_bp + scroll_width) + 'px) {\n' +
+          ' .devgrid .devgrid-col' + i + ' {\n' +
+          '   background: rgba(0, 255, 0, 0.3) !important;\n' +
+          '   opacity: .5;\n' +
+          '   transition: opacity 0.6s ease;\n' +
+          ' }\n' +
+          ' .devgrid .devgrid-col' + i + ' + .devgrid-gutter {\n' +
+          '   background: rgba(0, 255, 255, 0.2) !important;\n' +
+          ' }\n' +
+          '}\n';
+
+        // Construct vertical column breakpoint media query
+        styles[0].textContent +=
+          '@media only screen and (max-width: ' + (column_break_point + scroll_width) + 'px) {\n' +
+          ' .devgrid .devgrid-col' + i + ', .devgrid .devgrid-gutter' + i + ' {\n' +
+          '   display: none;\n' +
+          ' }\n' +
+          '}\n';
+      }
     }
 
     // Attach media queries
@@ -467,7 +504,6 @@
       return ($(elm).css('display') != 'none');
     });
 
-
     // Identify and set column breakpoint on body
     var vert_breakpoint = ghost_cols.length;
     if (this.vert_breakpoint != vert_breakpoint) {
@@ -476,6 +512,35 @@
     }
 
     return this.vert_breakpoint;
+  };
+
+  /**
+   * Method determines whether or not the body has a scroll bar.
+   */
+  Plugin.prototype.bodyHasScrollBar = function() {
+    var body_style              = document.body.currentStyle || window.getComputedStyle(document.body, ""),
+      has_v_scroll              = $(document).height() > $(window).height();
+    return (
+    (has_v_scroll && body_style.overflow == 'visible') ||
+    (has_v_scroll && body_style.overflowY == 'visible') ||
+    (has_v_scroll && body_style.overflow == 'auto') ||
+    (has_v_scroll && body_style.overflowY == 'auto'));
+  };
+
+  /**
+   * Method determines if browser is a webkit based browser.
+   */
+  Plugin.prototype.isBrowserWebkit = function() {
+    var
+      s         = window.getComputedStyle(document.documentElement, ''),
+      test      = (Array.prototype.slice.call(s).join('').match(/-(moz|webkit|ms)-/)),
+      ret       = false;
+    if (test.length) {
+      if (test[1] == 'webkit') {
+        ret = true;
+      }
+    }
+    return ret;
   };
 
 
