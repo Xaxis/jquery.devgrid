@@ -410,7 +410,7 @@
       column_indicator_bp     = 0,
       scroll_width            = 0,
       scroll_active           = this.bodyHasScrollBar(),
-      is_webkit               = this.isBrowserWebkit();
+      is_safari               = this.isBrowserSafari();
 
     // Remove any previously created media queries
     $('.devgrid-styles').remove();
@@ -442,7 +442,7 @@
       // scrollbar dimensions in their triggering calculation. As of this release, webkit based browsers are still
       // excluding scrollbar dimensions and thus we adjust for this by not including the scroll width.
       // @todo - Continually research a way to detect differences in browser media query calculations.
-      if (is_webkit) {
+      if (is_safari) {
 
         // Browsers that EXCLUDE scrollbar dimensions
         styles[0].textContent +=
@@ -528,15 +528,15 @@
   };
 
   /**
-   * Method determines if browser is a webkit based browser.
+   * Method determines if browser is a webkit based browser that is not chrome (aka Safari).
    */
-  Plugin.prototype.isBrowserWebkit = function() {
+  Plugin.prototype.isBrowserSafari = function() {
     var
       s         = window.getComputedStyle(document.documentElement, ''),
       test      = (Array.prototype.slice.call(s).join('').match(/-(moz|webkit|ms)-/)),
       ret       = false;
     if (test.length) {
-      if (test[1] == 'webkit') {
+      if (test[1] == 'webkit' && !navigator.userAgent.toLocaleLowerCase().match(/chrome/)) {
         ret = true;
       }
     }
