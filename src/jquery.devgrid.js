@@ -349,6 +349,10 @@
         target    = $(e.currentTarget),
         checked   = 0;
 
+      // Enforce that master visible property is being used
+      // -- This makes sure all controls work if devgrid is initially configured to not be visible (like in most production environments)
+      options.visible = true;
+
       // Show/hide X grid
       if (target.hasClass('devgrid-control-x-grid')) {
         checked = $('.devgrid-control-x-grid:checked').length;
